@@ -28,9 +28,9 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
 
     private boolean isMatchedPattern(String absoluteUrl, ConcurrentSkipListSet<String> patternList) {
         //
-        for(String s:patternList){
-            
-        }
+//        for(String s:patternList){
+//            
+//        }
         
         Iterator<String> it = patternList.iterator();
         String pattern;
