@@ -23,7 +23,7 @@ public class CrawlConfigurationHandler {
     public CrawlConfiguration loadCrawlConfigFromXml(){
         return new CrawlConfiguration();
     }
-    
+//hwdkauwhdi    
     // update crawl config file
     public boolean updateCrawlConfigXml(){
         return true;
