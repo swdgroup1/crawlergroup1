@@ -11,7 +11,6 @@
  */
 package wcrawler.core;
 
-import java.util.Iterator;
 import java.util.concurrent.ConcurrentSkipListSet;
 import wcrawler._interface.ICrawlDecisionMaker;
 import wcrawler.information.CrawlContext;
@@ -26,8 +25,8 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
     private ConcurrentSkipListSet<String> containInformationPattern;
     private ConcurrentSkipListSet<String> filterPattern;
 
+    //check whether an url is in a list
     private boolean isMatchedPattern(String absoluteUrl, ConcurrentSkipListSet<String> patternList) {
-        //
         for(String pattern:patternList){
             if(absoluteUrl.startsWith(pattern)){
                 return true;
@@ -38,13 +37,16 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
     }
 
     @Override
+    //check whether an url is needed to be downloaded
     public CrawlDecision crawlPageDecision(PageToCrawl page, CrawlContext context) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         String absoluteUrl = page.getAbsoluteUrl();
 
+        //get all queued pages at current time
         ConcurrentSkipListSet<String> queuedPages = context.getQueuedPages();
 
         CrawlDecision decision = new CrawlDecision();
+        
+        //default decision is NOT
         decision.setAllow(false);
 
         if (queuedPages.contains(absoluteUrl)) {
@@ -53,7 +55,7 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
             decision.setReason("Spider Trap");
         } else if (!isMatchedPattern(absoluteUrl, filterPattern)) {
             decision.setReason("Not match pattern");
-        } else {
+        } else {//pass all test
             decision.setAllow(true);
         }
 
@@ -61,8 +63,8 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
     }
 
     @Override
+    //check whether an url is contain useful hyperlinks
     public CrawlDecision crawlPageLinksDecision(CrawledPage page, CrawlContext context) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         String absoluteUrl = page.getAbsoluteUrl();
 
         CrawlDecision decision = new CrawlDecision();
@@ -72,8 +74,8 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
     }
 
     @Override
+    //check whether an url is contain useful information to scrap
     public CrawlDecision downloadPageContentDecision(CrawledPage page, CrawlContext context) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         String absoluteUrl = page.getAbsoluteUrl();
 
         CrawlDecision decision = new CrawlDecision();

@@ -31,10 +31,14 @@ public class MultiThreadManager {
     }  
     
     synchronized public void start(){
+        //execute all task in queue
         for(Runnable task:taskToRun){
             executor.execute(task);
         }
+        
+        //clear queue
         taskToRun.clear();
+        
         state = State.Running;
     }
     
@@ -47,13 +51,21 @@ public class MultiThreadManager {
     }
     
     synchronized public void stop(){
+        //stop executor
         executor.shutdown();
+        
+        //wait for all task to finish
         while(!executor.isTerminated()){};
+        
+        //clear the queue
         taskToRun.clear();
+        
         state = State.Ready;
     }
     
     synchronized public void addTask(Runnable task){
+        //if in running state, execute task immediately,
+        //otherwise push it to queue
         if(state == State.Running){
             executor.execute(task);
         }
