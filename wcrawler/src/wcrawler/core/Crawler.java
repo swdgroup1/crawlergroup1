@@ -25,6 +25,8 @@ public class Crawler {
     private IHyperLinkParser hyperLinkParser;
     private ICrawlDecisionMaker crawlDecisionMaker;
     private CrawlConfiguration crawlConfiguration;
+    
+    private static Logger _logger = Logger.getLogger(Crawler.class.getName());
         
     public Crawler() {
     }

@@ -21,7 +21,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import wcrawler._interface.IPageRequester;
 import wcrawler.information.CrawlConfiguration;
-import wcrawler.information.CrawlContext;
 import wcrawler.information.CrawledPage;
 import wcrawler.information.PageToCrawl;
 
@@ -30,11 +29,12 @@ import wcrawler.information.PageToCrawl;
  * @author TanNhat
  */
 public class PageRequester implements IPageRequester {
+
     private static Logger _logger = Logger.getLogger(PageRequester.class);
-    
+
     @Override
     public CrawledPage fetchPage(PageToCrawl page, CrawlConfiguration config) {
-        URL url = null;
+        URL url;
         BufferedReader reader = null;
         StringBuilder stringBuilder;
 
@@ -45,17 +45,25 @@ public class PageRequester implements IPageRequester {
             url = new URL(page.getAbsoluteUrl());
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            // just want to do an HTTP GET here
+            // just want to do an HTTP GET
             connection.setRequestMethod("GET");
 
             // wait to get response until reach configured timeout 
             connection.setReadTimeout(config.getConnectionTimeout());
             connection.connect();
 
+            
+            if(connection.getResponseCode() != HttpURLConnection.HTTP_OK){
+                _logger.debug("Get problem with connection: "+connection.getResponseMessage());
+                return null;
+            }
+            
+            _logger.debug("Response message: "+connection.getResponseMessage());
+            
             // read the output from the server
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             stringBuilder = new StringBuilder();
-            
+
             // get raw html from response
             String line;
             while ((line = reader.readLine()) != null) {
@@ -89,7 +97,7 @@ public class PageRequester implements IPageRequester {
                     CrawlCreator.logger.debug("Cannot close BufferedReader instance!", ioe);
                 }
             }
-            return new CrawledPage();
+            return null;
         }
     }
 }
