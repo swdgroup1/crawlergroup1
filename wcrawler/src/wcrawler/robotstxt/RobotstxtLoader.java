@@ -15,6 +15,72 @@
 package wcrawler.robotstxt;
 
 // Read data from file robots.txt of website
-public class RobotstxtLoader {
 
+import java.util.StringTokenizer;
+
+public class RobotstxtLoader {
+    private StringTokenizer tokenizer;
+    
+    //take a non-comment line from robots.txt
+    private String nextLine(){
+        String line;
+        while(tokenizer.hasMoreTokens()){
+            line = tokenizer.nextToken();//get one line
+            
+            //remove comment
+            int commentPos = line.indexOf("#");
+            if(commentPos!=-1){
+                line = line.substring(0,commentPos);
+            }
+            line = line.trim();
+            if(line.length()==0){//emtpy line or comment only
+                continue;
+            }
+            return line;
+        }
+        return null;
+    }
+    public Robotstxt loadRobotstxt(String content){
+        Robotstxt robotstxt = new Robotstxt();
+        
+        //parse the file line by line
+        tokenizer = new StringTokenizer(content, "\n");
+        
+        String line = nextLine();
+        //parse the file record by record
+        while(line!=null){
+            //ignore all un-supported directives before a new record
+            while(!line.startsWith("User-agent:")){
+                line = nextLine();
+            }
+            
+            //start new record
+            RobotstxtRecord record = new RobotstxtRecord();
+            
+            //get all user agents, they are always on top of a record
+            while(line.startsWith("User-agent:")){
+                record.addUserAgent(line.substring(11).trim());
+                line = nextLine();
+            }
+            
+            //get all another directives
+            while(line!=null&&!line.startsWith("User-agent:")){
+                if(line.startsWith("Disallow:")){
+                    record.addDisallow(line.substring(9).trim());
+                }
+                if(line.startsWith("Allow:")){
+                    record.addAllow(line.substring(6).trim());
+                }
+                if(line.startsWith("Crawl-delay:")){
+                    record.setCrawlDelay(Integer.parseInt(line.substring(12)));
+                }
+                line = nextLine();
+            }
+            
+            //add record to Robotstxt
+            robotstxt.addRecord(record);
+        }
+        
+        return robotstxt;
+    }
 }
