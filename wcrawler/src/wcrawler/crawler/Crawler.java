@@ -13,6 +13,7 @@ package wcrawler.crawler;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
@@ -60,27 +61,28 @@ public class Crawler implements Runnable {
     private void crawl() {
         int robotstxtCrawlDelayInSecs = 0;
         int crawlDealayConfigInSecs = crawlConfiguration.getPolitenessDelay();
-              
+
         if (crawlConfiguration.isPolitenessPolicyEnable()) {
             // Processing politeness policy
-            respectPolitenessPolicyHandler();            
+            respectPolitenessPolicyHandler();
         }
-       
+
         PageToCrawl page = scheduler.getNextPageToCrawl();
-       
-        _logger.info("About to crawl site: "+page.getAbsoluteUrl());
-        
+
+        _logger.info("About to crawl site: " + page.getAbsoluteUrl());
+
         // This loops will create a number of threads to do "processPage", 1 thread = 1 processPage
         while (!isCompleted) {
-            // Create runnable 
-            Runnable task = new Runnable() {
-                @Override
-                public void run() {
-                    processPage(scheduler.getNextPageToCrawl());
-                }
-            };
-            threadManager.addTask(task);
-
+            if (scheduler.getNumberOfPageToCrawl() > 0) {
+                // Create runnable 
+                Runnable task = new Runnable() {
+                    @Override
+                    public void run() {
+                        processPage(scheduler.getNextPageToCrawl());
+                    }
+                };
+                threadManager.addTask(task);
+            }
             if (threadManager.isExecutorTerminated()) {
                 isCompleted = false;
             }
@@ -88,12 +90,12 @@ public class Crawler implements Runnable {
     }
 
     /**
-     *  reads information from robots.txt to set up rate limiter based on crawl-delay and set up list of directory which is not allowed
+     * reads information from robots.txt to set up rate limiter based on
+     * crawl-delay and set up list of directory which is not allowed
      */
-    private void respectPolitenessPolicyHandler(){
-        
+    private void respectPolitenessPolicyHandler() {
     }
-    
+
     /**
      * This method represents for 1 thread which will crawl a page, then
      * schedule links in that page
@@ -195,6 +197,8 @@ public class Crawler implements Runnable {
     private void scheduleUrls(CrawledPage page) {
         List<String> urls = hyperLinkParser.getUrls(page, crawlContext.getCrawlFilterPattern());
 
+        List<PageToCrawl> pageToSchedule = new ArrayList<>();
+
         if (urls != null) {
             for (String url : urls) {
                 try {
@@ -205,11 +209,13 @@ public class Crawler implements Runnable {
                     pageToCrawl.setIsRetry(false);
                     pageToCrawl.setUrl(webUrl);
 
-                    scheduler.addPage(pageToCrawl);
+                    pageToSchedule.add(pageToCrawl);
+
                 } catch (MalformedURLException ex) {
                     java.util.logging.Logger.getLogger(Crawler.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            scheduler.addPagesToCrawl(pageToSchedule);
         }
     }
 

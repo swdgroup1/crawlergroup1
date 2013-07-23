@@ -52,12 +52,17 @@ public class CrawlCreator {
      * @param pageUrl the URL of the seed
      */
     public void addSeed(String url) {
+
+        // Check robotstxt about this directory, allow or not
+
         PageToCrawl page = new PageToCrawl();
         try {
             URL _url = new URL(url);
             page.setAbsoluteUrl(url);
             page.setIsRoot(true);
             page.setUrl(_url);
+
+            // add to queue
             scheduler.addPage(page);
         } catch (MalformedURLException ex) {
             _logger.error("Problem with setting URL", ex);

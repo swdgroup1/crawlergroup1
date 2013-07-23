@@ -20,7 +20,11 @@ import wcrawler.information.PageToCrawl;
 public class FIFOScheduler implements IScheduler {
 
     static Logger _logger = Logger.getLogger(FIFOScheduler.class);
-    private ConcurrentLinkedQueue<PageToCrawl> _pageToCrawl = new ConcurrentLinkedQueue<PageToCrawl>();
+    private ConcurrentLinkedQueue<PageToCrawl> _pageToCrawl;
+
+    public FIFOScheduler() {
+        this._pageToCrawl = new ConcurrentLinkedQueue<>();
+    }
 
     /**
      * Get next page to crawl from queue
@@ -89,7 +93,7 @@ public class FIFOScheduler implements IScheduler {
      */
     @Override
     public long getNumberOfPageToCrawl() {
-        int count = 0;
+        int count;
         count = _pageToCrawl.size();
 
         return count;
