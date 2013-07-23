@@ -27,7 +27,11 @@ public class JsoupHyperLinkParser implements IHyperLinkParser {
 
     private static Logger _logger = Logger.getLogger(JsoupHyperLinkParser.class);
     
-    // Parse hyperlink from raw html 
+    /**
+     * Parse hyperlink from raw html 
+     * @param page : page to parse hyperlink
+     * @return List<String> ; list of links
+     */
     @Override
     public List<String> getUrls(CrawledPage page) {
         try {

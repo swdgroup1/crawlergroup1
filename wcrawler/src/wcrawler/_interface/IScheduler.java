@@ -25,6 +25,9 @@ public interface IScheduler {
     // adds pages to working queue
     void addPagesToCrawl(List<PageToCrawl> page);
     
+    // adds page to working queue
+    void addPage(PageToCrawl page);
+    
     // clears all pages in working queue
     void clear();
     

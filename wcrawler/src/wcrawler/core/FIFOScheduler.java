@@ -60,12 +60,13 @@ public class FIFOScheduler implements IScheduler {
      * Add a page to queue
      * @param: page page to crawl to add to queue
      */
-    private boolean addPage(PageToCrawl page) {
+    @Override
+    public void addPage(PageToCrawl page) {
         if (page == null) {
             throw new NullPointerException("page");
         }
 
-        return _pageToCrawl.add(page);
+        _pageToCrawl.add(page);
     }
 
     /**
