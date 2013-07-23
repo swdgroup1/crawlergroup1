@@ -15,7 +15,6 @@
 package wcrawler._interface;
 
 import wcrawler.information.CrawlConfiguration;
-import wcrawler.information.CrawlContext;
 import wcrawler.information.CrawledPage;
 import wcrawler.information.PageToCrawl;
 

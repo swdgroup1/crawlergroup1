@@ -13,10 +13,7 @@ package wcrawler.crawler;
 
 import java.util.ArrayList;
 import java.util.concurrent.*;
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
-import static wcrawler.crawler.CrawlCreator._logger;
-import wcrawler.information.PageToCrawl;
 
 public class MultiThreadManager {
 
@@ -37,7 +34,7 @@ public class MultiThreadManager {
         executor = Executors.newFixedThreadPool(maxThread);
         state = State.Ready;
     }
-    
+
     synchronized public void start() {
         for (Runnable task : taskToRun) {
             executor.execute(task);
@@ -69,5 +66,9 @@ public class MultiThreadManager {
         } else {
             taskToRun.add(task);
         }
+    }
+    
+    synchronized public boolean isExecutorTerminated(){
+        return executor.isTerminated();
     }
 }

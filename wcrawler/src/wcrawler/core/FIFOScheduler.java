@@ -23,41 +23,46 @@ public class FIFOScheduler implements IScheduler {
     private ConcurrentLinkedQueue<PageToCrawl> _pageToCrawl = new ConcurrentLinkedQueue<PageToCrawl>();
 
     /**
-     * Get next page to crawl from queue 
+     * Get next page to crawl from queue
+     *
      * @return : PageToCrawl
-     **/
+     *
+     */
     @Override
     public PageToCrawl getNextPageToCrawl() {
         PageToCrawl pageToCrawl = null;
-        if(_pageToCrawl.size() > 0){
+        if (_pageToCrawl.size() > 0) {
             pageToCrawl = _pageToCrawl.poll();
         }
-        
+
         return pageToCrawl;
     }
 
     /**
      * Add a list of pages to concurrent queue
+     *
      * @params: List<PageToCrawl> pages
-     **/
+     *
+     */
     @Override
     public void addPagesToCrawl(List<PageToCrawl> pages) {
-        if(pages == null){
+        if (pages == null) {
             throw new NullPointerException("pages");
         }
-        
-        if(pages.isEmpty()){
+
+        if (pages.isEmpty()) {
             _logger.debug("This list of pages is empty");
             return;
         }
-        
-        for(PageToCrawl p : pages){
+
+        for (PageToCrawl p : pages) {
             addPage(p);
         }
     }
 
     /**
      * Add a page to queue
+     *
      * @param: page page to crawl to add to queue
      */
     @Override
@@ -79,18 +84,14 @@ public class FIFOScheduler implements IScheduler {
 
     /**
      * Get number of page to crawl in queue
-     * @return: count 
+     *
+     * @return: count
      */
     @Override
     public long getNumberOfPageToCrawl() {
         int count = 0;
         count = _pageToCrawl.size();
-        
-        return count;
-    }
 
-    @Override
-    public long getNumberOfCrawledPage() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return count;
     }
 }

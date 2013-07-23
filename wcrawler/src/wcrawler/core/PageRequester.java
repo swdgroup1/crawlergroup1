@@ -59,8 +59,6 @@ public class PageRequester implements IPageRequester {
                 return null;
             }
             
-            _logger.debug("Response message: "+connection.getResponseMessage());
-            
             // read the output from the server
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             stringBuilder = new StringBuilder();
@@ -76,6 +74,7 @@ public class PageRequester implements IPageRequester {
             crawledPage.setContentType(connection.getContentType());
             crawledPage.setContentEncoding(connection.getContentEncoding());
             crawledPage.setRawContent(stringBuilder.toString());
+            crawledPage.setResponseCode(connection.getResponseCode());
             crawledPage.setResponseMessage(connection.getResponseMessage());
             crawledPage.setPageSizeInBytes(stringBuilder.toString().getBytes("UTF-8").length);
 

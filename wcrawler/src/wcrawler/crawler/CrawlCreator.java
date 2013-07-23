@@ -12,11 +12,8 @@
 package wcrawler.crawler;
 
 // This class handles creating "Crawler"
-import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.log4j.Logger;
 import wcrawler._interface.ICrawlDecisionMaker;
 import wcrawler._interface.IHyperLinkParser;
@@ -68,9 +65,9 @@ public class CrawlCreator {
     }
 
     /**
-     * Creates crawlers and then add them to executor list
+     * Creates crawlers and then adds them to executor list
      *
-     * @param numberOfCrawlers number of crawlers want to create
+     * @param numberOfCrawlers number of crawlers wants to create
      */
     public void createCrawler(int numberOfCrawlers) {
 

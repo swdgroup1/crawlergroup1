@@ -21,6 +21,7 @@ import org.jsoup.select.Elements;
 import wcrawler._interface.IHyperLinkParser;
 import wcrawler.information.CrawledPage;
 import org.apache.log4j.Logger;
+import wcrawler.information.CrawlFilterPattern;
 
 // Parse hyperlink from page using Jsoup
 public class JsoupHyperLinkParser implements IHyperLinkParser {
@@ -33,7 +34,7 @@ public class JsoupHyperLinkParser implements IHyperLinkParser {
      * @return List<String> ; list of links
      */
     @Override
-    public List<String> getUrls(CrawledPage page) {
+    public List<String> getUrls(CrawledPage page, CrawlFilterPattern filterPattern) {
         try {
             if(page == null){
                 _logger.debug("CrawledPage is null, cannot get urls from it");

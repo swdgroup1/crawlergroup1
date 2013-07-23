@@ -21,6 +21,16 @@ public class CrawledPage extends Page {
     private long pageSizeInBytes;
     
     private String responseMessage;
+    
+    private int responseCode;
+
+    public int getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(int responseCode) {
+        this.responseCode = responseCode;
+    }
 
     public String getResponseMessage() {
         return responseMessage;
