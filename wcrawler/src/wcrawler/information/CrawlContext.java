@@ -13,15 +13,14 @@ package wcrawler.information;
 
 import java.net.URL;
 import java.util.Date;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class CrawlContext {
 
     private URL rootUrl;
-    private ConcurrentSkipListSet<String> crawledPages;
+    private ConcurrentSkipListSet<String> crawledUrls;
     private Date createdAtDatetime;
-    private ConcurrentSkipListSet<String> downloadedPages;
+    private ConcurrentSkipListSet<String> scrapedUrls;
     private PageToCrawl currentProcessingPage;
     private long numberOfCrawledPage;
     private long numberOfPageToCrawl;
@@ -82,19 +81,19 @@ public class CrawlContext {
     }
 
     public ConcurrentSkipListSet<String> getCrawledPages() {
-        return crawledPages;
+        return crawledUrls;
     }
 
-    public void setCrawledPages(ConcurrentSkipListSet<String> crawledPages) {
-        this.crawledPages = crawledPages;
+    public void setCrawledUrls(String url) {
+        this.crawledUrls.add(url);
     }
 
     public ConcurrentSkipListSet<String> getDownloadedPages() {
-        return downloadedPages;
+        return scrapedUrls;
     }
 
-    public void setDownloadedPages(ConcurrentSkipListSet<String> downloadedPages) {
-        this.downloadedPages = downloadedPages;
+    public void setScrapedUrls(String url) {
+        this.scrapedUrls.add(url);
     }
 
     public CrawlConfiguration getCrawlConfiguration() {

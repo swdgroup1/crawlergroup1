@@ -11,6 +11,7 @@
  */
 package wcrawler.core;
 
+import wcrawler.crawler.CrawlCreator;
 import org.apache.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -58,8 +59,6 @@ public class PageRequester implements IPageRequester {
                 return null;
             }
             
-            _logger.debug("Response message: "+connection.getResponseMessage());
-            
             // read the output from the server
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             stringBuilder = new StringBuilder();
@@ -75,6 +74,7 @@ public class PageRequester implements IPageRequester {
             crawledPage.setContentType(connection.getContentType());
             crawledPage.setContentEncoding(connection.getContentEncoding());
             crawledPage.setRawContent(stringBuilder.toString());
+            crawledPage.setResponseCode(connection.getResponseCode());
             crawledPage.setResponseMessage(connection.getResponseMessage());
             crawledPage.setPageSizeInBytes(stringBuilder.toString().getBytes("UTF-8").length);
 
@@ -83,9 +83,9 @@ public class PageRequester implements IPageRequester {
         } catch (ProtocolException pe) {
             _logger.debug("Get problem to set GET request method for connection", pe);
         } catch (SocketTimeoutException ste) {
-            CrawlCreator.logger.debug("Cannot establish connection to \"" + page.getAbsoluteUrl() + "\" , Timeout expires", ste);
+            _logger.debug("Cannot establish connection to \"" + page.getAbsoluteUrl() + "\" , Timeout expires", ste);
         } catch (IOException ioe) {
-            CrawlCreator.logger.debug("Cannot open connection to \"" + page.getAbsoluteUrl() + "\"", ioe);
+            _logger.debug("Cannot open connection to \"" + page.getAbsoluteUrl() + "\"", ioe);
         } finally {
             // close the reader; this can throw an exception too, so
             // wrap it in another try/catch block.
@@ -94,7 +94,7 @@ public class PageRequester implements IPageRequester {
                     reader.close();
                 } catch (IOException ioe) {
                     // log this exception
-                    CrawlCreator.logger.debug("Cannot close BufferedReader instance!", ioe);
+                    _logger.debug("Cannot close BufferedReader instance!", ioe);
                 }
             }
             return null;

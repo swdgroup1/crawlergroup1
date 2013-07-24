@@ -15,8 +15,9 @@
 package wcrawler._interface;
 
 import java.util.List;
+import wcrawler.information.CrawlFilterPattern;
 import wcrawler.information.CrawledPage;
 
 public interface IHyperLinkParser {
-    List<String> getUrls(CrawledPage page);    
+    List<String> getUrls(CrawledPage page, CrawlFilterPattern filterPattern);    
 }

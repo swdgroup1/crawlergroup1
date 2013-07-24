@@ -14,7 +14,9 @@
  */
 package wcrawler.information;
 
+import java.util.List;
+
 
 public class CrawlFilterPattern {
-
+    private List<String> urlPattern;
 }

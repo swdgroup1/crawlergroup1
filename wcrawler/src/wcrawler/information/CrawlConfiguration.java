@@ -31,6 +31,16 @@ public class CrawlConfiguration {
     
     // the maximum concurrent thread of running crawler
     private int maxConcurrentThread;
+    
+    private boolean politenessPolicyEnable;
+
+    public boolean isPolitenessPolicyEnable() {
+        return politenessPolicyEnable;
+    }
+
+    public void setPolitenessPolicyEnable(boolean politenessPolicyEnable) {
+        this.politenessPolicyEnable = politenessPolicyEnable;
+    }
 
     public int getPolitenessDelay() {
         return politenessDelay;
