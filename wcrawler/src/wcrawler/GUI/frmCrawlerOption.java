@@ -3,39 +3,53 @@
  * and open the template in the editor.
  */
 package wcrawler.GUI;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import wcrawler.core.CrawlConfigurationHandler;
 import wcrawler.information.CrawlConfiguration;
+
 /**
  *
  * @author Vo Anh
  */
 public class frmCrawlerOption extends javax.swing.JFrame {
+
     private CrawlConfiguration crawlConfiguration;
     private CrawlConfigurationHandler crawlConfigurationHandler;
     private WcrawlerManager wcrawlerManager;
+    private final String politenessDelay = "politenessDelay";
+    private final String connectionTimeout = "connectionTimeout";
+    private final String maxConnectionPerHost = "maxConnectionPerHost";
+    private final String maxTotalConnections = "maxTotalConnections";
+    private final String maxDownloadPageSize = "maxDownloadPageSize";
+    private final String maxConcurrentThread = "maxConcurrentThread";
+//    private final String politenessPolicyEnable = "politenessPolicyEnable";
+
     /**
      * Creates new form frmCrawlerOption
      */
     public frmCrawlerOption() {
         initComponents();
-        
+
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-        
-        LoadValue();
-    }
-    private void LoadValue(){
+        this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+
         crawlConfigurationHandler = new CrawlConfigurationHandler();
         crawlConfiguration = crawlConfigurationHandler.loadCrawlConfigFromXml();
-        cmbPolitenessDelay.setSelectedItem(crawlConfiguration.getPolitenessDelay());
-        cmbConnectionPerHost.setSelectedItem(crawlConfiguration.getMaxConnectionPerHost());
-        cmbConnectionTimeout.setSelectedItem(crawlConfiguration.getConnectionTimeout());
-        cmbMaxConcurrentThread.setSelectedItem(crawlConfiguration.getMaxConcurrentThread());
-        cmbMaxDownloadPageSize.setSelectedItem(crawlConfiguration.getMaxDownloadPageSize());
-        cmbMaxTotalConnections.setSelectedItem(crawlConfiguration.getMaxTotalConnections());
+        LoadValue();
     }
+
+    //Load value from file config.xml
+    private void LoadValue() {
+        txtPolitenessDelay.setText(String.valueOf(crawlConfiguration.getPolitenessDelay()));
+        txtMaxConnectionPerHost.setText(String.valueOf(crawlConfiguration.getMaxConnectionPerHost()));
+        txtConnectionTimeout.setText(String.valueOf(crawlConfiguration.getConnectionTimeout()));
+        txtMaxConcurrentThread.setText(String.valueOf(crawlConfiguration.getMaxConcurrentThread()));
+        txtMaxDownloadPageSize.setText(String.valueOf(crawlConfiguration.getMaxDownloadPageSize()));
+        txtMaxTotalConnections.setText(String.valueOf(crawlConfiguration.getMaxTotalConnections()));
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -48,20 +62,20 @@ public class frmCrawlerOption extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         pnlOption = new javax.swing.JPanel();
         lbPolitenessDelay = new javax.swing.JLabel();
-        cmbPolitenessDelay = new javax.swing.JComboBox();
         lbConnectionTimeout = new javax.swing.JLabel();
-        cmbConnectionTimeout = new javax.swing.JComboBox();
         lbConnectionPerHost = new javax.swing.JLabel();
-        cmbConnectionPerHost = new javax.swing.JComboBox();
         lbMaxTotalConnections = new javax.swing.JLabel();
-        cmbMaxTotalConnections = new javax.swing.JComboBox();
         lbMaxDownloadPageSize = new javax.swing.JLabel();
-        cmbMaxDownloadPageSize = new javax.swing.JComboBox();
         lbMaxConcurrentThread = new javax.swing.JLabel();
-        cmbMaxConcurrentThread = new javax.swing.JComboBox();
         btnOK = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
         btnDefault = new javax.swing.JButton();
+        txtPolitenessDelay = new javax.swing.JTextField();
+        txtConnectionTimeout = new javax.swing.JTextField();
+        txtMaxConcurrentThread = new javax.swing.JTextField();
+        txtMaxConnectionPerHost = new javax.swing.JTextField();
+        txtMaxTotalConnections = new javax.swing.JTextField();
+        txtMaxDownloadPageSize = new javax.swing.JTextField();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -78,38 +92,15 @@ public class frmCrawlerOption extends javax.swing.JFrame {
 
         lbPolitenessDelay.setText("Politeness Delay :");
 
-        cmbPolitenessDelay.setEditable(true);
-        cmbPolitenessDelay.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2", "3", "4", "5", "6", "7", "8" }));
-
         lbConnectionTimeout.setText("Connection Timeout :");
-
-        cmbConnectionTimeout.setEditable(true);
-        cmbConnectionTimeout.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2", "3", "4", "5", "6", "7", "8" }));
 
         lbConnectionPerHost.setText("Max Connection PerHost:");
 
-        cmbConnectionPerHost.setEditable(true);
-        cmbConnectionPerHost.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2", "3", "4", "5", "6", "7", "8" }));
-
         lbMaxTotalConnections.setText("Max Total Connections :");
-
-        cmbMaxTotalConnections.setEditable(true);
-        cmbMaxTotalConnections.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2", "3", "4", "5", "6", "7", "8" }));
 
         lbMaxDownloadPageSize.setText("Max Download Page Size :");
 
-        cmbMaxDownloadPageSize.setEditable(true);
-        cmbMaxDownloadPageSize.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2", "3", "4", "5", "6", "7", "8" }));
-
         lbMaxConcurrentThread.setText("Max Concurrent Thread :");
-
-        cmbMaxConcurrentThread.setEditable(true);
-        cmbMaxConcurrentThread.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2", "3", "4", "5", "6", "7", "8" }));
-        cmbMaxConcurrentThread.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbMaxConcurrentThreadActionPerformed(evt);
-            }
-        });
 
         btnOK.setText("OK");
         btnOK.addActionListener(new java.awt.event.ActionListener() {
@@ -140,40 +131,32 @@ public class frmCrawlerOption extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(pnlOptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlOptionLayout.createSequentialGroup()
+                        .addGroup(pnlOptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbPolitenessDelay)
+                            .addComponent(lbConnectionTimeout)
+                            .addComponent(lbMaxConcurrentThread))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                         .addGroup(pnlOptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(pnlOptionLayout.createSequentialGroup()
-                                .addGroup(pnlOptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lbConnectionTimeout)
-                                    .addComponent(lbPolitenessDelay))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(pnlOptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cmbConnectionTimeout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cmbPolitenessDelay, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(pnlOptionLayout.createSequentialGroup()
-                                .addComponent(lbMaxConcurrentThread)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cmbMaxConcurrentThread, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(77, 77, 77)
-                        .addGroup(pnlOptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(pnlOptionLayout.createSequentialGroup()
-                                .addComponent(lbConnectionPerHost)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(cmbConnectionPerHost, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlOptionLayout.createSequentialGroup()
-                                .addComponent(lbMaxTotalConnections)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(cmbMaxTotalConnections, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlOptionLayout.createSequentialGroup()
-                                .addComponent(lbMaxDownloadPageSize)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cmbMaxDownloadPageSize, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(txtConnectionTimeout, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+                            .addComponent(txtMaxConcurrentThread)
+                            .addComponent(txtPolitenessDelay))
+                        .addGap(22, 22, 22)
+                        .addGroup(pnlOptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbMaxTotalConnections)
+                            .addComponent(lbConnectionPerHost)
+                            .addComponent(lbMaxDownloadPageSize)))
                     .addGroup(pnlOptionLayout.createSequentialGroup()
                         .addComponent(btnOK, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(30, 30, 30)
                         .addComponent(btnDefault, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(32, 32, 32)
                         .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlOptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtMaxConnectionPerHost, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+                    .addComponent(txtMaxTotalConnections)
+                    .addComponent(txtMaxDownloadPageSize))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
         pnlOptionLayout.setVerticalGroup(
             pnlOptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -181,21 +164,21 @@ public class frmCrawlerOption extends javax.swing.JFrame {
                 .addGap(25, 25, 25)
                 .addGroup(pnlOptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbPolitenessDelay)
-                    .addComponent(cmbPolitenessDelay, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbConnectionPerHost)
-                    .addComponent(cmbConnectionPerHost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPolitenessDelay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtMaxConnectionPerHost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlOptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbConnectionTimeout)
-                    .addComponent(cmbConnectionTimeout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbMaxTotalConnections)
-                    .addComponent(cmbMaxTotalConnections, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtConnectionTimeout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtMaxTotalConnections, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlOptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmbMaxDownloadPageSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbMaxDownloadPageSize)
                     .addComponent(lbMaxConcurrentThread)
-                    .addComponent(cmbMaxConcurrentThread, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtMaxConcurrentThread, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtMaxDownloadPageSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29)
                 .addGroup(pnlOptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOK)
@@ -224,35 +207,40 @@ public class frmCrawlerOption extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cmbMaxConcurrentThreadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbMaxConcurrentThreadActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cmbMaxConcurrentThreadActionPerformed
-
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
         // TODO add your handling code here:
-        try {
-            
-        } catch (Exception e) {
-        }
+        //Update file config
+//        try {
+        //Update politenessDelay
+        crawlConfigurationHandler.updateCrawlConfigXml(politenessDelay, Integer.parseInt(txtPolitenessDelay.getText()));
+        //Update connectionTimeout
+        crawlConfigurationHandler.updateCrawlConfigXml(connectionTimeout, Integer.parseInt(txtConnectionTimeout.getText()));
+        //Update maxConnectionPerHost
+        crawlConfigurationHandler.updateCrawlConfigXml(maxConnectionPerHost, Integer.parseInt(txtMaxConnectionPerHost.getText()));
+        //Update maxTotalConnections
+        crawlConfigurationHandler.updateCrawlConfigXml(maxTotalConnections, Integer.parseInt(txtMaxTotalConnections.getText()));
+        //Update maxDownloadPageSize
+        crawlConfigurationHandler.updateCrawlConfigXml(maxDownloadPageSize, Integer.parseInt(txtMaxDownloadPageSize.getText()));
+        //Update maxConcurrentThread
+        crawlConfigurationHandler.updateCrawlConfigXml(maxConcurrentThread, Integer.parseInt(txtMaxConcurrentThread.getText()));
+
+//        } catch (Exception ex) {
+//             Logger.getLogger(CrawlConfigurationHandler.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        this.setVisible(false);
     }//GEN-LAST:event_btnOKActionPerformed
 
     private void btnDefaultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDefaultActionPerformed
         // TODO add your handling code here:
-        cmbPolitenessDelay.setSelectedItem("2");
-        cmbConnectionPerHost.setSelectedItem("4");
-        cmbConnectionTimeout.setSelectedItem("5");
-        cmbMaxConcurrentThread.setSelectedItem("7");
-        cmbMaxTotalConnections.setSelectedItem("2");
-        cmbMaxDownloadPageSize.setSelectedItem("4");
+       
     }//GEN-LAST:event_btnDefaultActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         // TODO add your handling code here:
         this.setVisible(false);
-        wcrawlerManager.ResetMain();
-        
-    }//GEN-LAST:event_btnCancelActionPerformed
+//        wcrawlerManager.ResetMain();
 
+    }//GEN-LAST:event_btnCancelActionPerformed
     /**
      * @param args the command line arguments
      */
@@ -291,12 +279,6 @@ public class frmCrawlerOption extends javax.swing.JFrame {
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnDefault;
     private javax.swing.JButton btnOK;
-    private javax.swing.JComboBox cmbConnectionPerHost;
-    private javax.swing.JComboBox cmbConnectionTimeout;
-    private javax.swing.JComboBox cmbMaxConcurrentThread;
-    private javax.swing.JComboBox cmbMaxDownloadPageSize;
-    private javax.swing.JComboBox cmbMaxTotalConnections;
-    private javax.swing.JComboBox cmbPolitenessDelay;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lbConnectionPerHost;
     private javax.swing.JLabel lbConnectionTimeout;
@@ -305,5 +287,11 @@ public class frmCrawlerOption extends javax.swing.JFrame {
     private javax.swing.JLabel lbMaxTotalConnections;
     private javax.swing.JLabel lbPolitenessDelay;
     private javax.swing.JPanel pnlOption;
+    private javax.swing.JTextField txtConnectionTimeout;
+    private javax.swing.JTextField txtMaxConcurrentThread;
+    private javax.swing.JTextField txtMaxConnectionPerHost;
+    private javax.swing.JTextField txtMaxDownloadPageSize;
+    private javax.swing.JTextField txtMaxTotalConnections;
+    private javax.swing.JTextField txtPolitenessDelay;
     // End of variables declaration//GEN-END:variables
 }

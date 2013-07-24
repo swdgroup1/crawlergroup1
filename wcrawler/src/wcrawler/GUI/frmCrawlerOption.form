@@ -67,41 +67,22 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="lbConnectionTimeout" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="lbPolitenessDelay" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="cmbConnectionTimeout" alignment="1" min="-2" pref="42" max="-2" attributes="0"/>
-                                      <Component id="cmbPolitenessDelay" alignment="1" min="-2" pref="42" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="lbMaxConcurrentThread" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="cmbMaxConcurrentThread" min="-2" pref="42" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lbPolitenessDelay" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="lbConnectionTimeout" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="lbMaxConcurrentThread" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="77" max="-2" attributes="0"/>
+                          <EmptySpace pref="40" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="lbConnectionPerHost" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="cmbConnectionPerHost" min="-2" pref="42" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="lbMaxTotalConnections" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="cmbMaxTotalConnections" min="-2" pref="42" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="lbMaxDownloadPageSize" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="cmbMaxDownloadPageSize" min="-2" pref="42" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="txtConnectionTimeout" pref="61" max="32767" attributes="0"/>
+                              <Component id="txtMaxConcurrentThread" max="32767" attributes="0"/>
+                              <Component id="txtPolitenessDelay" alignment="0" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lbMaxTotalConnections" min="-2" max="-2" attributes="0"/>
+                              <Component id="lbConnectionPerHost" min="-2" max="-2" attributes="0"/>
+                              <Component id="lbMaxDownloadPageSize" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -112,7 +93,13 @@
                           <Component id="btnCancel" min="-2" pref="81" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="txtMaxConnectionPerHost" pref="61" max="32767" attributes="0"/>
+                      <Component id="txtMaxTotalConnections" max="32767" attributes="0"/>
+                      <Component id="txtMaxDownloadPageSize" max="32767" attributes="0"/>
+                  </Group>
+                  <EmptySpace pref="21" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -122,23 +109,23 @@
                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lbPolitenessDelay" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="cmbPolitenessDelay" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="lbConnectionPerHost" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="cmbConnectionPerHost" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtPolitenessDelay" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtMaxConnectionPerHost" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lbConnectionTimeout" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="cmbConnectionTimeout" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lbMaxTotalConnections" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="cmbMaxTotalConnections" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtConnectionTimeout" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtMaxTotalConnections" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="cmbMaxDownloadPageSize" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lbMaxDownloadPageSize" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lbMaxConcurrentThread" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="cmbMaxConcurrentThread" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtMaxConcurrentThread" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtMaxDownloadPageSize" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -157,41 +144,9 @@
             <Property name="text" type="java.lang.String" value="Politeness Delay :"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JComboBox" name="cmbPolitenessDelay">
-          <Properties>
-            <Property name="editable" type="boolean" value="true"/>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="7">
-                <StringItem index="0" value="2"/>
-                <StringItem index="1" value="3"/>
-                <StringItem index="2" value="4"/>
-                <StringItem index="3" value="5"/>
-                <StringItem index="4" value="6"/>
-                <StringItem index="5" value="7"/>
-                <StringItem index="6" value="8"/>
-              </StringArray>
-            </Property>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="lbConnectionTimeout">
           <Properties>
             <Property name="text" type="java.lang.String" value="Connection Timeout :"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JComboBox" name="cmbConnectionTimeout">
-          <Properties>
-            <Property name="editable" type="boolean" value="true"/>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="7">
-                <StringItem index="0" value="2"/>
-                <StringItem index="1" value="3"/>
-                <StringItem index="2" value="4"/>
-                <StringItem index="3" value="5"/>
-                <StringItem index="4" value="6"/>
-                <StringItem index="5" value="7"/>
-                <StringItem index="6" value="8"/>
-              </StringArray>
-            </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lbConnectionPerHost">
@@ -199,41 +154,9 @@
             <Property name="text" type="java.lang.String" value="Max Connection PerHost:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JComboBox" name="cmbConnectionPerHost">
-          <Properties>
-            <Property name="editable" type="boolean" value="true"/>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="7">
-                <StringItem index="0" value="2"/>
-                <StringItem index="1" value="3"/>
-                <StringItem index="2" value="4"/>
-                <StringItem index="3" value="5"/>
-                <StringItem index="4" value="6"/>
-                <StringItem index="5" value="7"/>
-                <StringItem index="6" value="8"/>
-              </StringArray>
-            </Property>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="lbMaxTotalConnections">
           <Properties>
             <Property name="text" type="java.lang.String" value="Max Total Connections :"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JComboBox" name="cmbMaxTotalConnections">
-          <Properties>
-            <Property name="editable" type="boolean" value="true"/>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="7">
-                <StringItem index="0" value="2"/>
-                <StringItem index="1" value="3"/>
-                <StringItem index="2" value="4"/>
-                <StringItem index="3" value="5"/>
-                <StringItem index="4" value="6"/>
-                <StringItem index="5" value="7"/>
-                <StringItem index="6" value="8"/>
-              </StringArray>
-            </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lbMaxDownloadPageSize">
@@ -241,45 +164,10 @@
             <Property name="text" type="java.lang.String" value="Max Download Page Size :"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JComboBox" name="cmbMaxDownloadPageSize">
-          <Properties>
-            <Property name="editable" type="boolean" value="true"/>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="7">
-                <StringItem index="0" value="2"/>
-                <StringItem index="1" value="3"/>
-                <StringItem index="2" value="4"/>
-                <StringItem index="3" value="5"/>
-                <StringItem index="4" value="6"/>
-                <StringItem index="5" value="7"/>
-                <StringItem index="6" value="8"/>
-              </StringArray>
-            </Property>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="lbMaxConcurrentThread">
           <Properties>
             <Property name="text" type="java.lang.String" value="Max Concurrent Thread :"/>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JComboBox" name="cmbMaxConcurrentThread">
-          <Properties>
-            <Property name="editable" type="boolean" value="true"/>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="7">
-                <StringItem index="0" value="2"/>
-                <StringItem index="1" value="3"/>
-                <StringItem index="2" value="4"/>
-                <StringItem index="3" value="5"/>
-                <StringItem index="4" value="6"/>
-                <StringItem index="5" value="7"/>
-                <StringItem index="6" value="8"/>
-              </StringArray>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbMaxConcurrentThreadActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnOK">
           <Properties>
@@ -304,6 +192,18 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDefaultActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JTextField" name="txtPolitenessDelay">
+        </Component>
+        <Component class="javax.swing.JTextField" name="txtConnectionTimeout">
+        </Component>
+        <Component class="javax.swing.JTextField" name="txtMaxConcurrentThread">
+        </Component>
+        <Component class="javax.swing.JTextField" name="txtMaxConnectionPerHost">
+        </Component>
+        <Component class="javax.swing.JTextField" name="txtMaxTotalConnections">
+        </Component>
+        <Component class="javax.swing.JTextField" name="txtMaxDownloadPageSize">
         </Component>
       </SubComponents>
     </Container>
