@@ -25,10 +25,21 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
     private ConcurrentSkipListSet<String> containInformationPattern;
     private ConcurrentSkipListSet<String> filterPattern;
 
+    public CrawlDecisionMaker(ConcurrentSkipListSet<String> spiderTrap, ConcurrentSkipListSet<String> containLinkPattern, ConcurrentSkipListSet<String> containInformationPattern, ConcurrentSkipListSet<String> filterPattern) {
+        this.spiderTrap = (ConcurrentSkipListSet<String>) (spiderTrap != null ? spiderTrap : new ConcurrentSkipListSet<>());
+        this.containLinkPattern = (ConcurrentSkipListSet<String>) (containLinkPattern != null ? containLinkPattern : new ConcurrentSkipListSet<>());
+        this.containInformationPattern = (ConcurrentSkipListSet<String>) (containInformationPattern != null ? containInformationPattern : new ConcurrentSkipListSet<>());
+        this.filterPattern = (ConcurrentSkipListSet<String>) (filterPattern != null ? filterPattern : new ConcurrentSkipListSet<>());
+    }
+
     //check whether an url is in a list
     private boolean isMatchedPattern(String absoluteUrl, ConcurrentSkipListSet<String> patternList) {
-        for(String pattern:patternList){
-            if(absoluteUrl.startsWith(pattern)){
+        if(patternList.size() < 0){
+            return false;
+        }
+        
+        for (String pattern : patternList) {
+            if (absoluteUrl.startsWith(pattern)) {
                 return true;
             }
         }
@@ -45,7 +56,7 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
         ConcurrentSkipListSet<String> queuedPages = context.getQueuedPages();
 
         CrawlDecision decision = new CrawlDecision();
-        
+
         //default decision is NOT
         decision.setAllow(false);
 
@@ -59,7 +70,9 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
             decision.setAllow(true);
         }
 
+        decision.setAllow(true);
         return decision;
+
     }
 
     @Override
@@ -70,6 +83,7 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
         CrawlDecision decision = new CrawlDecision();
         decision.setAllow(isMatchedPattern(absoluteUrl, containLinkPattern));
 
+        decision.setAllow(true);
         return decision;
     }
 
@@ -81,6 +95,7 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
         CrawlDecision decision = new CrawlDecision();
         decision.setAllow(isMatchedPattern(absoluteUrl, containInformationPattern));
 
+        decision.setAllow(true);
         return decision;
     }
 }

@@ -19,6 +19,7 @@ import wcrawler._interface.ICrawlDecisionMaker;
 import wcrawler._interface.IHyperLinkParser;
 import wcrawler._interface.IPageRequester;
 import wcrawler._interface.IScheduler;
+import wcrawler.core.CrawlConfigurationHandler;
 import wcrawler.core.CrawlDecisionMaker;
 import wcrawler.core.FIFOScheduler;
 import wcrawler.core.JsoupHyperLinkParser;
@@ -40,7 +41,7 @@ public class CrawlCreator {
         this.pageRequester = new PageRequester();
         this.scheduler = new FIFOScheduler();
         this.hyperLinkParser = new JsoupHyperLinkParser();
-        this.crawlDecisionMaker = new CrawlDecisionMaker();
+        this.crawlDecisionMaker = new CrawlDecisionMaker(null,null,null,null);
         this.crawlConfiguration = crawlConfiguration;
         this.threadManager = new MultiThreadManager(crawlConfiguration.getMaxConcurrentThread());
     }
@@ -84,5 +85,17 @@ public class CrawlCreator {
 
         // Start thread manager
         threadManager.start();
+    }
+    
+    public static void main(String[] args){
+        CrawlConfigurationHandler crawlConfigurationHandler = new CrawlConfigurationHandler();
+        CrawlConfiguration crawlConfig = crawlConfigurationHandler.loadCrawlConfigFromXml();
+        
+        CrawlCreator crawlCreator = new CrawlCreator(crawlConfig);
+        crawlCreator.addSeed("http://www.drugs.com");
+        crawlCreator.addSeed("http://www.stackoverflow.com");
+        crawlCreator.addSeed("http://www.drugs.com/mtm");
+        
+        crawlCreator.createCrawler(1);
     }
 }

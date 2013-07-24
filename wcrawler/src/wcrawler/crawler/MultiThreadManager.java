@@ -25,7 +25,7 @@ public class MultiThreadManager {
 
         Ready, Pausing, Running
     };
-    private State state;
+    private static State state;
     private ExecutorService executor;
     private ArrayList<Runnable> taskToRun;
     private Logger _logger = Logger.getLogger(MultiThreadManager.class);
@@ -33,15 +33,18 @@ public class MultiThreadManager {
     public MultiThreadManager(int maxThread) {
         executor = Executors.newFixedThreadPool(maxThread);
         state = State.Ready;
+        taskToRun = new ArrayList<>();
     }
 
     synchronized public void start() {
+        state = State.Running;
         for (Runnable task : taskToRun) {
             executor.execute(task);
             _logger.info("Crawler " + task.hashCode() + " started.");
         }
+        
         taskToRun.clear();
-        state = State.Running;
+
     }
 
     synchronized public void pause() {
@@ -67,8 +70,8 @@ public class MultiThreadManager {
             taskToRun.add(task);
         }
     }
-    
-    synchronized public boolean isExecutorTerminated(){
+
+    synchronized public boolean isExecutorTerminated() {
         return executor.isTerminated();
     }
 }

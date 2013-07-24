@@ -28,6 +28,15 @@ public class CrawlContext {
     private CrawlFilterPattern crawlFilterPattern;
     private ConcurrentSkipListSet<String> queuedPages;//add by macvan
 
+    public CrawlContext() {
+        this.crawledUrls = new ConcurrentSkipListSet<>();
+        this.scrapedUrls = new ConcurrentSkipListSet<>();
+        this.queuedPages = new ConcurrentSkipListSet<>();
+        this.crawlFilterPattern = new CrawlFilterPattern();
+    }
+
+    
+    
     public ConcurrentSkipListSet<String> getQueuedPages() {
         return queuedPages;
     }

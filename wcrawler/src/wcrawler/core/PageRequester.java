@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -50,15 +51,16 @@ public class PageRequester implements IPageRequester {
             connection.setRequestMethod("GET");
 
             // wait to get response until reach configured timeout 
-            connection.setReadTimeout(config.getConnectionTimeout());
-            connection.connect();
+            connection.setReadTimeout(config.getConnectionTimeout()*1000);
+//            connection.setReadTimeout(10000);
+//            connection.connect();
 
-            
-            if(connection.getResponseCode() != HttpURLConnection.HTTP_OK){
-                _logger.debug("Get problem with connection: "+connection.getResponseMessage());
+
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                _logger.debug("Get problem with connection: " + connection.getResponseMessage());
                 return null;
             }
-            
+
             // read the output from the server
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             stringBuilder = new StringBuilder();
@@ -81,11 +83,11 @@ public class PageRequester implements IPageRequester {
             return crawledPage;
 
         } catch (ProtocolException pe) {
-            _logger.debug("Get problem to set GET request method for connection", pe);
+            _logger.debug("Get problem to set GET request method for connection. Exception: " + pe.getMessage(), pe);
         } catch (SocketTimeoutException ste) {
-            _logger.debug("Cannot establish connection to \"" + page.getAbsoluteUrl() + "\" , Timeout expires", ste);
+            _logger.debug("Cannot establish connection to \"" + page.getAbsoluteUrl() + "\" , Timeout expires. Exception: " + ste.getMessage(), ste);
         } catch (IOException ioe) {
-            _logger.debug("Cannot open connection to \"" + page.getAbsoluteUrl() + "\"", ioe);
+            _logger.debug("Cannot open connection to \"" + page.getAbsoluteUrl() + "\". Exception: " + ioe.getMessage(), ioe);
         } finally {
             // close the reader; this can throw an exception too, so
             // wrap it in another try/catch block.
@@ -94,10 +96,22 @@ public class PageRequester implements IPageRequester {
                     reader.close();
                 } catch (IOException ioe) {
                     // log this exception
-                    _logger.debug("Cannot close BufferedReader instance!", ioe);
+                    _logger.debug("Cannot close BufferedReader instance! Exception: " + ioe.getMessage(), ioe);
                 }
             }
-            return null;
         }
+        return null;
     }
+
+//    public static void main(String[] args) throws MalformedURLException {
+//        String url = "http://www.drugs.com";
+//        PageToCrawl page = new PageToCrawl();
+//        URL _url = new URL(url);
+//        page.setAbsoluteUrl(url);
+//        page.setIsRoot(true);
+//        page.setUrl(_url);
+//
+//        PageRequester pageRequester = new PageRequester();
+//        CrawledPage crawledPage = pageRequester.fetchPage(page, null);
+//    }
 }

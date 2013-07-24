@@ -67,9 +67,9 @@ public class Crawler implements Runnable {
             respectPolitenessPolicyHandler();
         }
 
-        PageToCrawl page = scheduler.getNextPageToCrawl();
+        //PageToCrawl page = scheduler.getNextPageToCrawl();
 
-        _logger.info("About to crawl site: " + page.getAbsoluteUrl());
+        //_logger.info("About to crawl site: " + page.getAbsoluteUrl());
 
         // This loops will create a number of threads to do "processPage", 1 thread = 1 processPage
         while (!isCompleted) {
@@ -78,11 +78,16 @@ public class Crawler implements Runnable {
                 Runnable task = new Runnable() {
                     @Override
                     public void run() {
-                        processPage(scheduler.getNextPageToCrawl());
+                        PageToCrawl page = scheduler.getNextPageToCrawl();
+                        System.out.println("Page to crawl: "+page.getAbsoluteUrl());
+                        processPage(page);
                     }
                 };
                 threadManager.addTask(task);
+            }else{
+                isCompleted = false;
             }
+            
             if (threadManager.isExecutorTerminated()) {
                 isCompleted = false;
             }
@@ -113,8 +118,10 @@ public class Crawler implements Runnable {
 
         CrawledPage crawledPage = crawlPage(page);
 
-        if (allowToCrawlPageLinks(crawledPage, crawlContext)) {
-            scheduleUrls(crawledPage);
+        if (crawledPage != null) {
+            if (allowToCrawlPageLinks(crawledPage, crawlContext)) {
+                scheduleUrls(crawledPage);
+            }
         }
 
     }
@@ -132,7 +139,11 @@ public class Crawler implements Runnable {
 
         CrawledPage crawledPage = pageRequester.fetchPage(page, crawlConfiguration);
 
-        _logger.info("Crawl page " + page.getAbsoluteUrl() + " completed, Status: " + crawledPage.getResponseCode() + " " + crawledPage.getResponseMessage());
+        if (crawledPage == null) {
+            _logger.debug("crawledPage is null " + page.getAbsoluteUrl());
+        } else {
+            _logger.info("Crawl page " + page.getAbsoluteUrl() + " completed, Status: " + crawledPage.getResponseCode() + " " + crawledPage.getResponseMessage());
+        }
 
         return crawledPage;
     }
@@ -195,7 +206,7 @@ public class Crawler implements Runnable {
      * @param: page CrawledPage
      */
     private void scheduleUrls(CrawledPage page) {
-        List<String> urls = hyperLinkParser.getUrls(page, crawlContext.getCrawlFilterPattern());
+        List<String> urls = hyperLinkParser.getUrls(page, null);
 
         List<PageToCrawl> pageToSchedule = new ArrayList<>();
 
