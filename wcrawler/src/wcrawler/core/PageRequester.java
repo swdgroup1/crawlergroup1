@@ -45,6 +45,7 @@ public class PageRequester implements IPageRequester {
         try {
             // create the HttpURLConnection
             url = new URL(page.getAbsoluteUrl());
+            System.out.println("Fetch page "+page.getAbsoluteUrl());
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             // just want to do an HTTP GET

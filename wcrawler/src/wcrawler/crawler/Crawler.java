@@ -72,7 +72,7 @@ public class Crawler implements Runnable {
         //_logger.info("About to crawl site: " + page.getAbsoluteUrl());
 
         // This loops will create a number of threads to do "processPage", 1 thread = 1 processPage
-        while (!isCompleted) {
+        if (!isCompleted) {
             if (scheduler.getNumberOfPageToCrawl() > 0) {
                 // Create runnable 
                 Runnable task = new Runnable() {
@@ -108,20 +108,26 @@ public class Crawler implements Runnable {
      * @param page: page to crawl
      */
     private void processPage(PageToCrawl page) {
-        if (page == null) {
-            return;
-        }
-
-        if (!allowToCrawlPage(page, crawlContext)) {
-            return;
-        }
-
-        CrawledPage crawledPage = crawlPage(page);
-
-        if (crawledPage != null) {
-            if (allowToCrawlPageLinks(crawledPage, crawlContext)) {
-                scheduleUrls(crawledPage);
+        try {
+            if (page == null) {
+                return;
             }
+
+            if (!allowToCrawlPage(page, crawlContext)) {
+                return;
+            }
+
+            CrawledPage crawledPage = crawlPage(page);
+            Thread.sleep(10000);
+            crawl();
+            
+            if (crawledPage != null) {
+                if (allowToCrawlPageLinks(crawledPage, crawlContext)) {
+                    scheduleUrls(crawledPage);
+                }
+            }
+        } catch (InterruptedException ex) {
+            java.util.logging.Logger.getLogger(Crawler.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -212,8 +218,11 @@ public class Crawler implements Runnable {
 
         if (urls != null) {
             for (String url : urls) {
+                if(url==null||url.trim().length()==0)
+                    continue;
                 try {
                     PageToCrawl pageToCrawl = new PageToCrawl();
+                    System.out.println("add to queue "+url);
                     URL webUrl = new URL(url);
                     pageToCrawl.setAbsoluteUrl(url);
                     pageToCrawl.setIsRoot(false);
