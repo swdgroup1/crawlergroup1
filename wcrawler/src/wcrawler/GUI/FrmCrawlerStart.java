@@ -5,7 +5,6 @@
 package wcrawler.GUI;
 
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -19,46 +18,20 @@ import java.util.regex.Pattern;
  *
  * @author Vo Anh
  */
-public class FrmStartCrawler extends javax.swing.JPanel {
+public class FrmCrawlerStart extends javax.swing.JFrame {
 
     /**
-     * Creates new form FrmStartCrawler
+     * Creates new form FrmCrawlerStart
      */
-    public FrmStartCrawler() {
-       
+    public FrmCrawlerStart() {
         initComponents();
         //Display center Screen
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-        pnlFilter.setEnabled(false);
         
+        pnlFilter.setVisible(false);
     }
-    //Get the text URL
-    private String GetURL()
-    {
-        return (cmbTextURL.getItemAt(cmbTextURL.getItemCount()-1).toString());
-    }
-    public void Create()
-    {
-        //Get text for user copy Clipboard
-        try {
-            String data = "";
-                   data = (String)Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-                   Pattern pattern = Pattern.compile("\\s");
-                   Matcher matcher = pattern.matcher(data);
-                   boolean found = matcher.find();
-               
-                   //only capture non-space string from clipboard
-                   if(!found) cmbTextURL.getEditor().setItem(data);
-                   else cmbTextURL.getEditor().setItem(null);
-               
-               
-               cmbTextURL.getEditor().selectAll();   
-               this.setVisible(true);
-        } catch (UnsupportedFlavorException | IOException ex) {
-            Logger.getLogger(FrmStartCrawler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -68,6 +41,7 @@ public class FrmStartCrawler extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         pnlStartClawler = new javax.swing.JPanel();
         lbURL = new javax.swing.JLabel();
         pnlFilter = new javax.swing.JPanel();
@@ -78,6 +52,8 @@ public class FrmStartCrawler extends javax.swing.JPanel {
         pnlButton = new javax.swing.JPanel();
         btnOK = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         lbURL.setText("URL:");
 
@@ -148,8 +124,18 @@ public class FrmStartCrawler extends javax.swing.JPanel {
         );
 
         btnOK.setText("OK");
+        btnOK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOKActionPerformed(evt);
+            }
+        });
 
         btnCancel.setText("Cancel");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlButtonLayout = new javax.swing.GroupLayout(pnlButton);
         pnlButton.setLayout(pnlButtonLayout);
@@ -168,53 +154,144 @@ public class FrmStartCrawler extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(btnOK, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnCancel)
+                .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(pnlStartClawler, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(pnlButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(30, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnlStartClawler, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(pnlButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void chkIsFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIsFilterActionPerformed
         // TODO add your handling code here:
-        
-        //Handle optional when user check set filter
+        //If the checkbox is check , set panel filter is visible
         if(chkIsFilter.isSelected()==true){
-            pnlFilter.setEnabled(true);
+            pnlFilter.setVisible(true);
+        }
+        else{
+            pnlFilter.setVisible(false);
         }
     }//GEN-LAST:event_chkIsFilterActionPerformed
 
     private void cmbTextURLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTextURLActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_cmbTextURLActionPerformed
 
+    private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnOKActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+    }//GEN-LAST:event_btnCancelActionPerformed
+ //Get the text URL
+    private String GetURL()
+    {
+        return (cmbTextURL.getItemAt(cmbTextURL.getItemCount()-1).toString());
+    }
+    // Method Get text for user copy Clipboard
+    public void Create()
+    {
+        try {
+            String data = "";
+                   data = (String)Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+                   Pattern pattern = Pattern.compile("\\s");
+                   Matcher matcher = pattern.matcher(data);
+                   boolean found = matcher.find();
+               
+                   //only capture non-space string from clipboard
+                   if(!found){
+                       cmbTextURL.getEditor().setItem(data);
+                   }
+                   else {
+                       cmbTextURL.getEditor().setItem(null);
+                   }
+                             
+               cmbTextURL.getEditor().selectAll();   
+               this.setVisible(true);
+        } catch (UnsupportedFlavorException | IOException ex) {
+            Logger.getLogger(FrmCrawlerStart.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+//    /**
+//     * @param args the command line arguments
+//     */
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(FrmCrawlerStart.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(FrmCrawlerStart.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(FrmCrawlerStart.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(FrmCrawlerStart.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new FrmCrawlerStart().setVisible(true);
+//            }
+//        });
+//    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnOK;
     private javax.swing.JCheckBox chkIsFilter;
     private javax.swing.JComboBox cmbTextURL;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lbURL;
     private javax.swing.JPanel pnlButton;
     private javax.swing.JPanel pnlFilter;

@@ -12,7 +12,8 @@ import java.awt.Toolkit;
  * @author Vo Anh
  */
 public class WcrawlerManager extends javax.swing.JFrame {
-    private FrmStartCrawler frmStartCrawler;
+    private FrmCrawlerStart crawlerStart;
+    private frmCrawlerOption crawlerOption;
     /**
      * Creates new form WcrawlerManager
      */
@@ -24,6 +25,13 @@ public class WcrawlerManager extends javax.swing.JFrame {
         //display in the center of screen
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+        
+        crawlerStart = new FrmCrawlerStart();
+        crawlerStart.setVisible(false);
+        
+        crawlerOption = new frmCrawlerOption();
+        crawlerOption.setVisible(false);
+        
         //Set Button enable when formload
         btnStart.setEnabled(true);
         btnPause.setEnabled(false);
@@ -31,9 +39,11 @@ public class WcrawlerManager extends javax.swing.JFrame {
         btnStop.setEnabled(false);
         btnOption.setEnabled(true);
         //init other form
-        frmStartCrawler = new FrmStartCrawler();
+        
     }
-
+    public void ResetMain(){
+        this.setEnabled(true);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -57,28 +67,28 @@ public class WcrawlerManager extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        btnStart.setIcon(new javax.swing.ImageIcon(getClass().getResource("/wcrawler/GUI/download.png"))); // NOI18N
+        btnStart.setIcon(new javax.swing.ImageIcon("C:\\Users\\Vo Anh\\Documents\\NetBeansProjects\\SWD01\\crawlergroup1\\wcrawler\\resource\\download.png")); // NOI18N
         btnStart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnStartActionPerformed(evt);
             }
         });
 
-        btnPause.setIcon(new javax.swing.ImageIcon(getClass().getResource("/wcrawler/GUI/pause.png"))); // NOI18N
+        btnPause.setIcon(new javax.swing.ImageIcon("C:\\Users\\Vo Anh\\Documents\\NetBeansProjects\\SWD01\\crawlergroup1\\wcrawler\\resource\\pause.png")); // NOI18N
         btnPause.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPauseActionPerformed(evt);
             }
         });
 
-        btnResume.setIcon(new javax.swing.ImageIcon(getClass().getResource("/wcrawler/GUI/resume.png"))); // NOI18N
+        btnResume.setIcon(new javax.swing.ImageIcon("C:\\Users\\Vo Anh\\Documents\\NetBeansProjects\\SWD01\\crawlergroup1\\wcrawler\\resource\\resume.png")); // NOI18N
         btnResume.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnResumeActionPerformed(evt);
             }
         });
 
-        btnStop.setIcon(new javax.swing.ImageIcon(getClass().getResource("/wcrawler/GUI/stop.png"))); // NOI18N
+        btnStop.setIcon(new javax.swing.ImageIcon("C:\\Users\\Vo Anh\\Documents\\NetBeansProjects\\SWD01\\crawlergroup1\\wcrawler\\resource\\resume.png")); // NOI18N
         btnStop.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnStopActionPerformed(evt);
@@ -93,7 +103,7 @@ public class WcrawlerManager extends javax.swing.JFrame {
 
         lbStop.setText("Stop");
 
-        btnOption.setIcon(new javax.swing.ImageIcon(getClass().getResource("/wcrawler/GUI/option.png"))); // NOI18N
+        btnOption.setIcon(new javax.swing.ImageIcon("C:\\Users\\Vo Anh\\Documents\\NetBeansProjects\\SWD01\\crawlergroup1\\wcrawler\\resource\\option.png")); // NOI18N
         btnOption.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnOptionActionPerformed(evt);
@@ -144,12 +154,13 @@ public class WcrawlerManager extends javax.swing.JFrame {
             pnlCrawlerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlCrawlerLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlCrawlerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnOption, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnPause, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnStop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnResume, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(pnlCrawlerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlCrawlerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(btnOption, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnPause, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnStop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnResume, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlCrawlerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbOption, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -158,7 +169,7 @@ public class WcrawlerManager extends javax.swing.JFrame {
                         .addComponent(lbPause)
                         .addComponent(lbResume)
                         .addComponent(lbStop)))
-                .addContainerGap(215, Short.MAX_VALUE))
+                .addContainerGap(167, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -208,17 +219,18 @@ public class WcrawlerManager extends javax.swing.JFrame {
 
     private void btnOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOptionActionPerformed
         // TODO add your handling code here:
+        this.setEnabled(false);
+       crawlerOption.setVisible(true);
     }//GEN-LAST:event_btnOptionActionPerformed
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
         // TODO add your handling code here:
-        this.setEnabled(false);
-        frmStartCrawler.Create();
+        crawlerStart.setVisible(true);
+        crawlerStart.Create();
         //Set enable button pause, resume, stops is true
-//        btnPause.setEnabled(true);
-//        btnStop.setEnabled(true);
-//        btnResume.setEnabled(false);
-//        
+        btnPause.setEnabled(true);
+        btnStop.setEnabled(true);
+        btnResume.setEnabled(false);
     }//GEN-LAST:event_btnStartActionPerformed
 
     /**

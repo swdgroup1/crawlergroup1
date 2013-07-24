@@ -96,12 +96,14 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="btnOption" max="32767" attributes="0"/>
-                      <Component id="btnPause" max="32767" attributes="0"/>
-                      <Component id="btnStop" max="32767" attributes="0"/>
-                      <Component id="btnResume" max="32767" attributes="0"/>
-                      <Component id="btnStart" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="btnOption" max="32767" attributes="0"/>
+                          <Component id="btnPause" max="32767" attributes="0"/>
+                          <Component id="btnStop" max="32767" attributes="0"/>
+                          <Component id="btnResume" max="32767" attributes="0"/>
+                      </Group>
+                      <Component id="btnStart" min="-2" pref="54" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
@@ -113,7 +115,7 @@
                           <Component id="lbStop" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="215" max="32767" attributes="0"/>
+                  <EmptySpace pref="167" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -122,7 +124,7 @@
         <Component class="javax.swing.JButton" name="btnStart">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/wcrawler/GUI/download.png"/>
+              <Image iconType="2" name="C:\Users\Vo Anh\Documents\NetBeansProjects\SWD01\crawlergroup1\wcrawler\resource\download.png"/>
             </Property>
           </Properties>
           <Events>
@@ -132,7 +134,7 @@
         <Component class="javax.swing.JButton" name="btnPause">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/wcrawler/GUI/pause.png"/>
+              <Image iconType="2" name="C:\Users\Vo Anh\Documents\NetBeansProjects\SWD01\crawlergroup1\wcrawler\resource\pause.png"/>
             </Property>
           </Properties>
           <Events>
@@ -142,7 +144,7 @@
         <Component class="javax.swing.JButton" name="btnResume">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/wcrawler/GUI/resume.png"/>
+              <Image iconType="2" name="C:\Users\Vo Anh\Documents\NetBeansProjects\SWD01\crawlergroup1\wcrawler\resource\resume.png"/>
             </Property>
           </Properties>
           <Events>
@@ -152,7 +154,7 @@
         <Component class="javax.swing.JButton" name="btnStop">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/wcrawler/GUI/stop.png"/>
+              <Image iconType="2" name="C:\Users\Vo Anh\Documents\NetBeansProjects\SWD01\crawlergroup1\wcrawler\resource\resume.png"/>
             </Property>
           </Properties>
           <Events>
@@ -182,7 +184,7 @@
         <Component class="javax.swing.JButton" name="btnOption">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/wcrawler/GUI/option.png"/>
+              <Image iconType="2" name="C:\Users\Vo Anh\Documents\NetBeansProjects\SWD01\crawlergroup1\wcrawler\resource\option.png"/>
             </Property>
           </Properties>
           <Events>
