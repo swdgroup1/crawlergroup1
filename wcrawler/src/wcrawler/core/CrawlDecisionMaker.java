@@ -11,6 +11,8 @@
  */
 package wcrawler.core;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentSkipListSet;
 import wcrawler._interface.ICrawlDecisionMaker;
 import wcrawler.information.CrawlContext;
@@ -20,24 +22,26 @@ import wcrawler.information.PageToCrawl;
 
 public class CrawlDecisionMaker implements ICrawlDecisionMaker {
 
-    private ConcurrentSkipListSet<String> robotstxtAllow;
-    private ConcurrentSkipListSet<String> robotstxtDisallow;
-    private ConcurrentSkipListSet<String> containLinkPattern;
-    private ConcurrentSkipListSet<String> containInformationPattern;
-    private ConcurrentSkipListSet<String> filterAllow;
-    private ConcurrentSkipListSet<String> filterDisallow;
+    private ArrayList<String> robotstxtAllow;
+    private ArrayList<String> robotstxtDisallow;
+    private ArrayList<String> containLinkPattern;
+    private ArrayList<String> containInformationPattern;
+    private ArrayList<String> filterAllow;
+    private ArrayList<String> filterDisallow;
 
-    public CrawlDecisionMaker(ConcurrentSkipListSet<String> robotstxtAllow, ConcurrentSkipListSet<String> robotstxtDisallow, ConcurrentSkipListSet<String> containLinkPattern, ConcurrentSkipListSet<String> containInformationPattern, ConcurrentSkipListSet<String> filterAllow, ConcurrentSkipListSet<String> filterDisallow) {
-        this.robotstxtAllow = robotstxtAllow != null ? robotstxtAllow : new ConcurrentSkipListSet<String>();
-        this.robotstxtDisallow = robotstxtDisallow != null ? robotstxtDisallow : new ConcurrentSkipListSet<String>();
-        this.containLinkPattern = containLinkPattern != null ? containLinkPattern : new ConcurrentSkipListSet<String>();
-        this.containInformationPattern = containInformationPattern != null ? containInformationPattern : new ConcurrentSkipListSet<String>();
-        this.filterAllow = filterAllow != null ? filterAllow : new ConcurrentSkipListSet<String>();
-        this.filterDisallow = filterDisallow != null ? filterDisallow : new ConcurrentSkipListSet<String>();
+    public CrawlDecisionMaker(ArrayList<String> robotstxtAllow, ArrayList<String> robotstxtDisallow, 
+            ArrayList<String> containLinkPattern, ArrayList<String> containInformationPattern, 
+            ArrayList<String> filterAllow, ArrayList<String> filterDisallow) {
+        this.robotstxtAllow = robotstxtAllow != null ? robotstxtAllow : new ArrayList<String>();
+        this.robotstxtDisallow = robotstxtDisallow != null ? robotstxtDisallow : new ArrayList<String>();
+        this.containLinkPattern = containLinkPattern != null ? containLinkPattern : new ArrayList<String>();
+        this.containInformationPattern = containInformationPattern != null ? containInformationPattern : new ArrayList<String>();
+        this.filterAllow = filterAllow != null ? filterAllow : new ArrayList<String>();
+        this.filterDisallow = filterDisallow != null ? filterDisallow : new ArrayList<String>();
     }
 
     //check whether an url is in a list
-    private boolean isMatchedPattern(String absoluteUrl, ConcurrentSkipListSet<String> patternList) {
+    private boolean isMatchedPattern(String absoluteUrl, Collection<String> patternList) {
         if (patternList.size() < 0) {
             return false;
         }
@@ -52,7 +56,7 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
     }
 
     //check whether an url is allowed according to a set of allow and disallow rules
-    private boolean isAllowed(String absoluteUrl, ConcurrentSkipListSet<String> allows, ConcurrentSkipListSet<String> disallows) {
+    private boolean isAllowed(String absoluteUrl, Collection<String> allows, Collection<String> disallows) {
         //find the longest matched allow rule
         String longestAllow = "";
         for (String allow : allows) {

@@ -21,6 +21,8 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.Date;
+import java.util.logging.Level;
 import wcrawler._interface.IPageRequester;
 import wcrawler.information.CrawlConfiguration;
 import wcrawler.information.CrawledPage;
@@ -33,6 +35,8 @@ import wcrawler.information.PageToCrawl;
 public class PageRequester implements IPageRequester {
 
     private static Logger _logger = Logger.getLogger(PageRequester.class);
+    protected long lastFetchTime = 0;
+    protected final Object mutex = new Object();
 
     @Override
     public CrawledPage fetchPage(PageToCrawl page, CrawlConfiguration config) {
@@ -43,16 +47,26 @@ public class PageRequester implements IPageRequester {
         _logger.info("About to fetch page: \"" + page.getAbsoluteUrl() + "\"");
 
         try {
+            long bf = System.currentTimeMillis();
+            synchronized (mutex) {
+                long now = (new Date()).getTime();
+                if (now - lastFetchTime < config.getPolitenessDelay()) {
+                    Thread.sleep(config.getPolitenessDelay() - (now - lastFetchTime));
+                }
+
+                long af = System.currentTimeMillis();
+                System.out.println("Delay in " + (config.getPolitenessDelay() - (now - lastFetchTime)) + " ms");
+            }
+
             // create the HttpURLConnection
             url = new URL(page.getAbsoluteUrl());
-            System.out.println("Fetch page "+page.getAbsoluteUrl());
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
+            lastFetchTime = (new Date()).getTime();
             // just want to do an HTTP GET
             connection.setRequestMethod("GET");
 
             // wait to get response until reach configured timeout 
-            connection.setReadTimeout(config.getConnectionTimeout()*1000);
+            connection.setReadTimeout(config.getConnectionTimeout() * 1000);
 //            connection.setReadTimeout(10000);
 //            connection.connect();
 
@@ -90,6 +104,8 @@ public class PageRequester implements IPageRequester {
             _logger.debug("Cannot establish connection to \"" + page.getAbsoluteUrl() + "\" , Timeout expires. Exception: " + ste.getMessage(), ste);
         } catch (IOException ioe) {
             _logger.debug("Cannot open connection to \"" + page.getAbsoluteUrl() + "\". Exception: " + ioe.getMessage(), ioe);
+        } catch (InterruptedException ex) {
+            java.util.logging.Logger.getLogger(PageRequester.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             // close the reader; this can throw an exception too, so
             // wrap it in another try/catch block.
@@ -104,7 +120,6 @@ public class PageRequester implements IPageRequester {
         }
         return null;
     }
-
 //    public static void main(String[] args) throws MalformedURLException {
 //        String url = "http://www.drugs.com";
 //        PageToCrawl page = new PageToCrawl();

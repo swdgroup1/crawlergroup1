@@ -40,34 +40,19 @@ public class CrawlCreator {
     private MultiThreadManager threadManager;
     static Logger _logger = Logger.getLogger(CrawlCreator.class);
 
-    public CrawlCreator(CrawlConfiguration crawlConfiguration,CrawlFilterPattern crawlFilterPattern,String domain) {
-        this.pageRequester = new PageRequester();
-        this.scheduler = new FIFOScheduler();
+    public CrawlCreator(CrawlConfiguration crawlConfiguration,CrawlFilterPattern crawlFilterPattern) {
+        this.threadManager = new MultiThreadManager(crawlConfiguration.getMaxConcurrentThread());
         this.hyperLinkParser = new JsoupHyperLinkParser();
         
         /**
-         * Get information from robots.txt
+         * TO DO: Get information from robots.txt
          */
-        try{
-            
-            RobotstxtLoader robotstxtLoader = new RobotstxtLoader();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-                      
-        /**
-         * Add dummy containLinkPattern and contain InformaitonPattern
-         */
-        ConcurrentSkipListSet<String> containLinkPattern = new ConcurrentSkipListSet<>();
-        ConcurrentSkipListSet<String> containInformationPattern = new ConcurrentSkipListSet<>();
-        containLinkPattern.add("http://");
-        containInformationPattern.add("http://");
         
-        this.crawlDecisionMaker = new CrawlDecisionMaker(null, null, containLinkPattern, 
-                containInformationPattern, crawlFilterPattern.getAllows(), crawlFilterPattern.getDisallows());
+        this.crawlDecisionMaker = new CrawlDecisionMaker(null, null, crawlConfiguration.getContainLinkPattern(), 
+                crawlConfiguration.getContainInformationPattern(), 
+                crawlFilterPattern.getAllows(), crawlFilterPattern.getDisallows());
         
         this.crawlConfiguration = crawlConfiguration;
-        this.threadManager = new MultiThreadManager(crawlConfiguration.getMaxConcurrentThread());
     }
 
     /**
@@ -79,7 +64,8 @@ public class CrawlCreator {
     public void addSeed(String url) {
 
         // Check robotstxt about this directory, allow or not
-
+        scheduler = new FIFOScheduler();
+        pageRequester = new PageRequester();
         PageToCrawl page = new PageToCrawl();
         try {
             URL _url = new URL(url);
@@ -90,6 +76,10 @@ public class CrawlCreator {
             // add to queue
             
             scheduler.addPage(page);
+            Crawler crawler = new Crawler(pageRequester, scheduler, hyperLinkParser, crawlDecisionMaker, crawlConfiguration, threadManager);
+            threadManager.addTask(crawler);
+
+            _logger.info("Add Crawler to list ");
         } catch (MalformedURLException ex) {
             _logger.error("Problem with setting URL", ex);
         }
@@ -110,6 +100,22 @@ public class CrawlCreator {
 
         // Start thread manager
         threadManager.start();
+    }
+    
+    public void start(){
+        threadManager.start();
+    }
+    
+    public void pause(){
+        threadManager.pause();
+    }
+    
+    public void resume(){
+        threadManager.resume();
+    }
+    
+    public void stop(){
+        threadManager.stop();
     }
     
     public static void main(String[] args){

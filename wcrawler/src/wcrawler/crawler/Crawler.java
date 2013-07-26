@@ -38,6 +38,7 @@ public class Crawler implements Runnable {
     private CrawlContext crawlContext;
     private static Logger _logger = Logger.getLogger(Crawler.class.getName());
     private boolean isCompleted;
+    
 
     public Crawler() {
     }
@@ -62,30 +63,36 @@ public class Crawler implements Runnable {
      */
     private void crawl() {
         int robotstxtCrawlDelayInSecs = 0;
-        int crawlDealayConfigInSecs = crawlConfiguration.getPolitenessDelay();
+        final int crawlDealayConfigInSecs = crawlConfiguration.getPolitenessDelay();
 
         if (crawlConfiguration.isPolitenessPolicyEnable()) {
             // Processing politeness policy
             respectPolitenessPolicyHandler();
         }
 
-        //PageToCrawl page = scheduler.getNextPageToCrawl();
-
-        //_logger.info("About to crawl site: " + page.getAbsoluteUrl());
-
         // This loops will create a number of threads to do "processPage", 1 thread = 1 processPage
-        while (!isCompleted) {
+        if (!isCompleted) {
             if (scheduler.getNumberOfPageToCrawl() > 0) {
                 // Create runnable 
                 System.out.println("create processPage");
                 Runnable task = new Runnable() {
                     @Override
                     public void run() {
+
                         PageToCrawl page = scheduler.getNextPageToCrawl();
-                        System.out.println("Page to crawl: " + page.getAbsoluteUrl());
-                        processPage(page);
+                        _logger.debug("Page to crawl: " + page.getAbsoluteUrl());
+                        long before = System.currentTimeMillis();
+                        try {
+                            processPage(page);
+                        } catch (InterruptedException ex) {
+                            _logger.error(ex.getMessage());
+                        }
+                        long after = System.currentTimeMillis();
+
+                        _logger.debug("process a page took: " + (after - before) + " ms");
                     }
                 };
+
                 threadManager.addTask(task);
             } else {
                 isCompleted = false;
@@ -110,22 +117,42 @@ public class Crawler implements Runnable {
      *
      * @param page: page to crawl
      */
-    private void processPage(PageToCrawl page) {
-            if (page == null) {
-                return;
-            }
+    private void processPage(PageToCrawl page) throws InterruptedException {
+        _logger.debug("Enter process Page");
+        if (page == null) {
+            return;
+        }
 
         if (!allowToCrawlPage(page, crawlContext)) {
             return;
         }
 
-            CrawledPage crawledPage = crawlPage(page);
+        CrawledPage crawledPage = crawlPage(page);       
 
-            if (crawledPage != null) {
-                if (allowToCrawlPageLinks(crawledPage, crawlContext)) {
-                    scheduleUrls(crawledPage);
-                }
+        boolean isCrawled = false;
+        if (scheduler.getNumberOfPageToCrawl() > 0) {
+            crawl();
+            isCrawled = true;
+        }
+
+        if (crawledPage == null) {
+            _logger.debug("crawledPage is null " + page.getAbsoluteUrl());
+        } else {
+            _logger.info("Crawl page " + page.getAbsoluteUrl() + " completed, Status: " + crawledPage.getResponseCode() + " " + crawledPage.getResponseMessage());
+
+            if (allowToCrawlPageLinks(crawledPage, crawlContext)) {
+                _logger.debug("Enter scheduler!");
+                long before = System.currentTimeMillis();
+                scheduleUrls(crawledPage);
+                long after = System.currentTimeMillis();
+
+                _logger.debug("Schedule took: " + (after - before) + " ms");
             }
+        }
+
+        if (!isCrawled) {
+            crawl();
+        }
 
     }
 
@@ -139,14 +166,13 @@ public class Crawler implements Runnable {
         _logger.debug("About to crawl page " + page.getAbsoluteUrl());
 
         //implements ratelimiter here first
-
+        long before = System.currentTimeMillis();
         CrawledPage crawledPage = pageRequester.fetchPage(page, crawlConfiguration);
+        long after = System.currentTimeMillis();
 
-        if (crawledPage == null) {
-            _logger.debug("crawledPage is null " + page.getAbsoluteUrl());
-        } else {
-            _logger.info("Crawl page " + page.getAbsoluteUrl() + " completed, Status: " + crawledPage.getResponseCode() + " " + crawledPage.getResponseMessage());
-        }
+        _logger.debug("Fetch page, took: " + (after - before) + " ms");
+
+
 
         return crawledPage;
     }
@@ -212,9 +238,16 @@ public class Crawler implements Runnable {
         System.out.println("Scheduler page " + page.getAbsoluteUrl());
         List<String> urls = hyperLinkParser.getUrls(page, null);
 
-        //List<PageToCrawl> pageToSchedule = new ArrayList<>();
-
+        List<PageToCrawl> pageToSchedule = new ArrayList<>();
+        _logger.debug("Scheduling...");
         if (urls != null) {
+            /* Total amount of free memory available to the JVM */
+            _logger.debug("Free memory available before schedule (bytes): "
+                    + Runtime.getRuntime().freeMemory());
+
+            /* Total memory currently in use by the JVM */
+            _logger.debug("Total memory in use by JVM before schedule (bytes): "
+                    + Runtime.getRuntime().totalMemory());
             for (String url : urls) {
                 if (url == null || url.trim().length() == 0) {
                     continue;
@@ -226,24 +259,36 @@ public class Crawler implements Runnable {
                     pageToCrawl.setIsRoot(false);
                     pageToCrawl.setIsRetry(false);
                     pageToCrawl.setUrl(webUrl);             
+                    
+                    crawlContext.addQueuedPage(url);
+                    pageToSchedule.add(pageToCrawl);
 
-                    //pageToSchedule.add(pageToCrawl);
-                    if (allowToCrawlPage(pageToCrawl, crawlContext)) {
-                        System.out.println("add to queue "+url);
-                        scheduler.addPage(pageToCrawl);
-                        crawlContext.addQueuedPage(url);
-                    }
 
                 } catch (MalformedURLException ex) {
                     java.util.logging.Logger.getLogger(Crawler.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            //scheduler.addPagesToCrawl(pageToSchedule);
+            /* Total amount of free memory available to the JVM */
+            _logger.debug("Free memory available after schedule (bytes): "
+                    + Runtime.getRuntime().freeMemory());
+
+            /* Total memory currently in use by the JVM */
+            _logger.debug("Total memory in use after schedule (bytes): "
+                    + Runtime.getRuntime().totalMemory());
+            scheduler.addPagesToCrawl(pageToSchedule);
+            _logger.debug("Schedule completed!");
         }
     }
 
     @Override
     public void run() {
+        /**
+         * Add seed to  queued list
+         */
+        //PageToCrawl temp = scheduler.getNextPageToCrawl();//take the seed
+        //crawlContext.addQueuedPage(temp.getAbsoluteUrl());//add to queued list
+        //scheduler.addPage(temp); //add it back
+        
         crawl();
     }
 }

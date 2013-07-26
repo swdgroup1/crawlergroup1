@@ -59,6 +59,12 @@ public class CrawlConfigurationHandler {
                 String maxDownloadPageSize = "";
                 String maxConcurrentThread = "";
                 String maxTotalConnections ="";
+                 //for my sql database
+                String driver ="";
+                String url ="";
+                String username ="";
+                String password="";
+                String database="";
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     //Set value 
@@ -68,6 +74,12 @@ public class CrawlConfigurationHandler {
                     maxDownloadPageSize = getValue("maxDownloadPageSize", element);
                     maxConcurrentThread = getValue("maxConcurrentThread", element);
                     maxTotalConnections = getValue("maxTotalConnections", element);
+                    //For connnect Mysql Database
+                    driver = getValue("driver", element);
+                    url = getValue("url", element);
+                    username= getValue("username", element);
+                    password = getValue("password", element);
+                    database = getValue("database", element);
                 }
                 //Set value into  crawlConfiguration
                 crawlConfiguration.setPolitenessDelay(Integer.parseInt(politenessDelay));
@@ -76,6 +88,12 @@ public class CrawlConfigurationHandler {
                 crawlConfiguration.setMaxDownloadPageSize(Integer.parseInt(maxDownloadPageSize));
                 crawlConfiguration.setMaxConcurrentThread(Integer.parseInt(maxConcurrentThread));
                 crawlConfiguration.setMaxTotalConnections(Integer.parseInt(maxTotalConnections));
+                //Set value for database
+                crawlConfiguration.setDriver(driver);
+                crawlConfiguration.setUrl(url);
+                crawlConfiguration.setUsername(username);
+                crawlConfiguration.setPassword(password);
+                crawlConfiguration.setDatabase(database);
             }
 
         } catch (ParserConfigurationException | SAXException | IOException ex) {
