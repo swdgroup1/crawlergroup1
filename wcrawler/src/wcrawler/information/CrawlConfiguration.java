@@ -30,7 +30,55 @@ public class CrawlConfiguration {
     // the maximum concurrent thread of running crawler
     private int maxConcurrentThread;
     private boolean politenessPolicyEnable;
+    private String driver;
+    //URL path 
+    private String url;
+    //username login mysql
+    private String username;
 
+    public String getDriver() {
+        return driver;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+    //password login mysql
+    private String password;
+    //name database 
+    private String database;
     public ArrayList<String> getSeedList() {
         ArrayList<String> list = new ArrayList<>();
         list.add("www.drugs.com");
