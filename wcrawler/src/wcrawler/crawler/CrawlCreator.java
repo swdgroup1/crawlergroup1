@@ -41,7 +41,7 @@ public class CrawlCreator {
         this.pageRequester = new PageRequester();
         this.scheduler = new FIFOScheduler();
         this.hyperLinkParser = new JsoupHyperLinkParser();
-        this.crawlDecisionMaker = new CrawlDecisionMaker(null,null,null,null);
+        this.crawlDecisionMaker = new CrawlDecisionMaker(null,null,null,null,null,null);
         this.crawlConfiguration = crawlConfiguration;
         this.threadManager = new MultiThreadManager(crawlConfiguration.getMaxConcurrentThread());
     }

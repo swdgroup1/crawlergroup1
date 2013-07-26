@@ -39,7 +39,7 @@ public class WcrawlerManager extends javax.swing.JFrame {
         crawlConfiguration = crawlConfigurationHandler.loadCrawlConfigFromXml();
         
         //creat start and option form
-        crawlerStart = new FrmCrawlerStart(this);
+        crawlerStart = new FrmCrawlerStart(this,crawlConfiguration);
         crawlerStart.setVisible(false);
 
         crawlerOption = new frmCrawlerOption(this,crawlConfiguration);

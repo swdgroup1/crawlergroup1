@@ -20,24 +20,28 @@ import wcrawler.information.PageToCrawl;
 
 public class CrawlDecisionMaker implements ICrawlDecisionMaker {
 
-    private ConcurrentSkipListSet<String> spiderTrap;
+    private ConcurrentSkipListSet<String> robotstxtAllow;
+    private ConcurrentSkipListSet<String> robotstxtDisallow;
     private ConcurrentSkipListSet<String> containLinkPattern;
     private ConcurrentSkipListSet<String> containInformationPattern;
-    private ConcurrentSkipListSet<String> filterPattern;
+    private ConcurrentSkipListSet<String> filterAllow;
+    private ConcurrentSkipListSet<String> filterDisallow;
 
-    public CrawlDecisionMaker(ConcurrentSkipListSet<String> spiderTrap, ConcurrentSkipListSet<String> containLinkPattern, ConcurrentSkipListSet<String> containInformationPattern, ConcurrentSkipListSet<String> filterPattern) {
-        this.spiderTrap = (ConcurrentSkipListSet<String>) (spiderTrap != null ? spiderTrap : new ConcurrentSkipListSet<>());
-        this.containLinkPattern = (ConcurrentSkipListSet<String>) (containLinkPattern != null ? containLinkPattern : new ConcurrentSkipListSet<>());
-        this.containInformationPattern = (ConcurrentSkipListSet<String>) (containInformationPattern != null ? containInformationPattern : new ConcurrentSkipListSet<>());
-        this.filterPattern = (ConcurrentSkipListSet<String>) (filterPattern != null ? filterPattern : new ConcurrentSkipListSet<>());
+    public CrawlDecisionMaker(ConcurrentSkipListSet<String> robotstxtAllow, ConcurrentSkipListSet<String> robotstxtDisallow, ConcurrentSkipListSet<String> containLinkPattern, ConcurrentSkipListSet<String> containInformationPattern, ConcurrentSkipListSet<String> filterAllow, ConcurrentSkipListSet<String> filterDisallow) {
+        this.robotstxtAllow = robotstxtAllow != null ? robotstxtAllow : new ConcurrentSkipListSet<String>();
+        this.robotstxtDisallow = robotstxtDisallow != null ? robotstxtDisallow : new ConcurrentSkipListSet<String>();
+        this.containLinkPattern = containLinkPattern != null ? containLinkPattern : new ConcurrentSkipListSet<String>();
+        this.containInformationPattern = containInformationPattern != null ? containInformationPattern : new ConcurrentSkipListSet<String>();
+        this.filterAllow = filterAllow != null ? filterAllow : new ConcurrentSkipListSet<String>();
+        this.filterDisallow = filterDisallow != null ? filterDisallow : new ConcurrentSkipListSet<String>();
     }
 
     //check whether an url is in a list
     private boolean isMatchedPattern(String absoluteUrl, ConcurrentSkipListSet<String> patternList) {
-        if(patternList.size() < 0){
+        if (patternList.size() < 0) {
             return false;
         }
-        
+
         for (String pattern : patternList) {
             if (absoluteUrl.startsWith(pattern)) {
                 return true;
@@ -45,6 +49,30 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
         }
 
         return false;
+    }
+
+    //check whether an url is allowed according to a set of allow and disallow rules
+    private boolean isAllowed(String absoluteUrl, ConcurrentSkipListSet<String> allows, ConcurrentSkipListSet<String> disallows) {
+        //find the longest matched allow rule
+        String longestAllow = "";
+        for (String allow : allows) {
+            if (absoluteUrl.startsWith(allow)
+                    && allow.length() > longestAllow.length()) {
+                longestAllow = allow;
+            }
+        }
+
+        //find the longest matched disallow rule
+        String longestDisallow = "";
+        for (String disallow : disallows) {
+            if (absoluteUrl.startsWith(disallow)
+                    && disallow.length() > longestDisallow.length()) {
+                longestDisallow = disallow;
+            }
+        }
+
+        //the longest matched rule will be the choosen one
+        return longestAllow.length() >= longestDisallow.length();
     }
 
     @Override
@@ -60,19 +88,25 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
         //default decision is NOT
         decision.setAllow(false);
 
-        if (queuedPages.contains(absoluteUrl)) {
+        /**
+         * An url is downloaded if only it haven't download before; satisfy
+         * allow/disallow rules provided in robots.txt and by user; contain urls
+         * which may need to be download or information to scrap
+         */
+        if (isMatchedPattern(absoluteUrl, queuedPages)) { //Queued before
             decision.setReason("All ready queued");
-        } else if (spiderTrap.contains(absoluteUrl)) {
-            decision.setReason("Spider Trap");
-        } else if (!isMatchedPattern(absoluteUrl, filterPattern)) {
-            decision.setReason("Not match pattern");
-        } else {//pass all test
+        } else if (!isAllowed(absoluteUrl, robotstxtAllow, robotstxtDisallow)) { //Not permited by robots.txt
+            decision.setReason("Disallow by robots.txt");
+        } else if (!isAllowed(absoluteUrl, filterAllow, filterDisallow)) { //Not permited by filter pattern
+            decision.setReason("Disallow by users' filter pattern");
+        } else if (!isMatchedPattern(absoluteUrl, containLinkPattern)
+                && !isMatchedPattern(absoluteUrl, containInformationPattern)) { //Not contains urls nor information
+            decision.setReason("Contain no useful information");
+        } else {
             decision.setAllow(true);
         }
-
-        decision.setAllow(true);
+        
         return decision;
-
     }
 
     @Override

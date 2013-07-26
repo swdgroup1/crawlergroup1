@@ -11,10 +11,16 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.DefaultComboBoxModel;
+import wcrawler.information.CrawlFilterPattern;
+import wcrawler.information.CrawlConfiguration;
 
 /**
  *
@@ -23,11 +29,17 @@ import java.util.regex.Pattern;
 public class FrmCrawlerStart extends javax.swing.JFrame {
 
     private WcrawlerManager wcrawlerManager;
-
+    private CrawlFilterPattern crawlFilterPattern;
+    private int selectedIndex;
+    
+    public CrawlFilterPattern getCrawlFilterPattern() {
+        return crawlFilterPattern;
+    }
+    
     /**
      * Creates new form FrmCrawlerStart
      */
-    public FrmCrawlerStart(WcrawlerManager wcrawlermanager) {
+    public FrmCrawlerStart(WcrawlerManager wcrawlermanager,CrawlConfiguration crawlConfiguration) {
         initComponents();
 
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
@@ -35,17 +47,20 @@ public class FrmCrawlerStart extends javax.swing.JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
-                wcrawlerManager.setEnabled(true);
+                loadValue();
+                returnToManager();
             }
         });
 
         this.wcrawlerManager = wcrawlermanager;
+        crawlFilterPattern = new CrawlFilterPattern();
+        
+        ArrayList<String> seedList = crawlConfiguration.getSeedList();
+        cmbTextURL.setModel(new DefaultComboBoxModel(seedList.toArray()));
 
         //Display center Screen
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-
-        pnlFilter.setVisible(false);
     }
 
     /**
@@ -57,87 +72,21 @@ public class FrmCrawlerStart extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        pnlStartClawler = new javax.swing.JPanel();
-        lbURL = new javax.swing.JLabel();
-        pnlFilter = new javax.swing.JPanel();
-        txtFilter = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        chkIsFilter = new javax.swing.JCheckBox();
-        cmbTextURL = new javax.swing.JComboBox();
         pnlButton = new javax.swing.JPanel();
         btnOK = new javax.swing.JButton();
         javax.swing.JButton btnCancel = new javax.swing.JButton();
+        pnlStartClawler = new javax.swing.JPanel();
+        pnlFilter = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        teAllow = new javax.swing.JTextArea();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        teDisallow = new javax.swing.JTextArea();
+        jLabel2 = new javax.swing.JLabel();
+        lbURL = new javax.swing.JLabel();
+        cmbTextURL = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        lbURL.setText("URL:");
-
-        jLabel1.setText("Enter Filter: ");
-
-        javax.swing.GroupLayout pnlFilterLayout = new javax.swing.GroupLayout(pnlFilter);
-        pnlFilter.setLayout(pnlFilterLayout);
-        pnlFilterLayout.setHorizontalGroup(
-            pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlFilterLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE))
-        );
-        pnlFilterLayout.setVerticalGroup(
-            pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlFilterLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        chkIsFilter.setText("Set Filter");
-        chkIsFilter.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chkIsFilterActionPerformed(evt);
-            }
-        });
-
-        cmbTextURL.setEditable(true);
-        cmbTextURL.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbTextURLActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout pnlStartClawlerLayout = new javax.swing.GroupLayout(pnlStartClawler);
-        pnlStartClawler.setLayout(pnlStartClawlerLayout);
-        pnlStartClawlerLayout.setHorizontalGroup(
-            pnlStartClawlerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlStartClawlerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlStartClawlerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlStartClawlerLayout.createSequentialGroup()
-                        .addComponent(lbURL)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbTextURL, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(chkIsFilter))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(pnlStartClawlerLayout.createSequentialGroup()
-                .addComponent(pnlFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        pnlStartClawlerLayout.setVerticalGroup(
-            pnlStartClawlerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlStartClawlerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlStartClawlerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbURL)
-                    .addComponent(cmbTextURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10)
-                .addComponent(chkIsFilter)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 5, Short.MAX_VALUE)
-                .addComponent(pnlFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
 
         btnOK.setText("OK");
         btnOK.addActionListener(new java.awt.event.ActionListener() {
@@ -174,67 +123,134 @@ public class FrmCrawlerStart extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pnlStartClawler, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(pnlButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
+        jLabel1.setText("Allow Filter");
+
+        teAllow.setColumns(20);
+        teAllow.setRows(5);
+        jScrollPane1.setViewportView(teAllow);
+
+        teDisallow.setColumns(20);
+        teDisallow.setRows(5);
+        jScrollPane2.setViewportView(teDisallow);
+
+        jLabel2.setText("Disallow Filter");
+
+        javax.swing.GroupLayout pnlFilterLayout = new javax.swing.GroupLayout(pnlFilter);
+        pnlFilter.setLayout(pnlFilterLayout);
+        pnlFilterLayout.setHorizontalGroup(
+            pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlFilterLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1))
+                .addGap(10, 10, 10)
+                .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
+                .addGap(20, 20, 20))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        pnlFilterLayout.setVerticalGroup(
+            pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlFilterLayout.createSequentialGroup()
+                .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlFilterLayout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addComponent(jLabel1))
+                    .addGroup(pnlFilterLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlFilterLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlFilterLayout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addComponent(jLabel2)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        lbURL.setText("URL:");
+
+        cmbTextURL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbTextURLActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlStartClawlerLayout = new javax.swing.GroupLayout(pnlStartClawler);
+        pnlStartClawler.setLayout(pnlStartClawlerLayout);
+        pnlStartClawlerLayout.setHorizontalGroup(
+            pnlStartClawlerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlStartClawlerLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlStartClawler, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(pnlButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addComponent(lbURL)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cmbTextURL, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(pnlStartClawlerLayout.createSequentialGroup()
+                .addComponent(pnlFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        pnlStartClawlerLayout.setVerticalGroup(
+            pnlStartClawlerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlStartClawlerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlStartClawlerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbURL)
+                    .addComponent(cmbTextURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addComponent(pnlFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pnlStartClawler, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(pnlButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pnlStartClawler, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(pnlButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void chkIsFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIsFilterActionPerformed
-        // TODO add your handling code here:
-        //If the checkbox is check , set panel filter is visible
-        if (chkIsFilter.isSelected() == true) {
-            pnlFilter.setVisible(true);
-        } else {
-            pnlFilter.setVisible(false);
-        }
-    }//GEN-LAST:event_chkIsFilterActionPerformed
 
     private void cmbTextURLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTextURLActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbTextURLActionPerformed
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        //TO DO: implement OK button
+        selectedIndex = cmbTextURL.getSelectedIndex();
+        
+        crawlFilterPattern.getAllows().clear();
+        StringTokenizer tokenizer = new StringTokenizer(teAllow.getText());
+        while(tokenizer.hasMoreTokens()){
+            crawlFilterPattern.getAllows().add(tokenizer.nextToken());
+        }
+        
+        crawlFilterPattern.getDisallows().clear();
+        tokenizer = new StringTokenizer(teDisallow.getText());
+        while(tokenizer.hasMoreTokens()){
+            crawlFilterPattern.getDisallows().add(tokenizer.nextToken());
+        }
+        
         returnToManager();
     }//GEN-LAST:event_btnOKActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        // TODO add your handling code here:
+        loadValue();
         returnToManager();
     }//GEN-LAST:event_btnCancelActionPerformed
     //Get the text URL
@@ -301,20 +317,43 @@ public class FrmCrawlerStart extends javax.swing.JFrame {
 //    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnOK;
-    private javax.swing.JCheckBox chkIsFilter;
     private javax.swing.JComboBox cmbTextURL;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lbURL;
     private javax.swing.JPanel pnlButton;
     private javax.swing.JPanel pnlFilter;
     private javax.swing.JPanel pnlStartClawler;
-    private javax.swing.JTextField txtFilter;
+    private javax.swing.JTextArea teAllow;
+    private javax.swing.JTextArea teDisallow;
     // End of variables declaration//GEN-END:variables
 
     private void returnToManager() {
         this.setVisible(false);
         wcrawlerManager.setEnabled(true);
         wcrawlerManager.setVisible(true);
+    }
+    
+    public String getSelectedURL(){
+        return (String) cmbTextURL.getItemAt(selectedIndex);
+    }
+    
+    private void loadValue(){
+        cmbTextURL.setSelectedIndex(selectedIndex);
+        teAllow.setText("");
+        String s="";
+        for(String allow:crawlFilterPattern.getAllows()){
+            s+=allow+"\n";
+        }
+        teAllow.setText(s);
+        
+        s="";
+        teDisallow.setText("");
+        for(String disallow:crawlFilterPattern.getDisallows()){
+            s+=disallow+"\n";
+        }
+        teDisallow.setText(s);
     }
 }

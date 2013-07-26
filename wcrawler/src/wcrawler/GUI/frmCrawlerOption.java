@@ -39,7 +39,8 @@ public class frmCrawlerOption extends javax.swing.JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
-                wcrawlerManager.setEnabled(true);
+                loadValue();
+                returnToManager();
             }
         });
 

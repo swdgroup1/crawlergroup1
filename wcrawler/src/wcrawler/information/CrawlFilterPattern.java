@@ -14,9 +14,40 @@
  */
 package wcrawler.information;
 
-import java.util.List;
+
+import java.util.concurrent.ConcurrentSkipListSet;
 
 
 public class CrawlFilterPattern {
-    private List<String> urlPattern;
+        ConcurrentSkipListSet<String> allows;
+        ConcurrentSkipListSet<String> disallows;
+
+    public CrawlFilterPattern() {
+        allows = new ConcurrentSkipListSet<>();
+        disallows = new ConcurrentSkipListSet<>();
+    }
+
+    public ConcurrentSkipListSet<String> getAllows() {
+        return allows;
+    }
+
+    public void setAllows(ConcurrentSkipListSet<String> allows) {
+        this.allows = allows;
+    }
+
+    public ConcurrentSkipListSet<String> getDisallows() {
+        return disallows;
+    }
+
+    public void setDisallows(ConcurrentSkipListSet<String> disallows) {
+        this.disallows = disallows;
+    }
+    
+    public void addAllows(String allow){
+        allows.add(allow);
+    }
+    
+    public void addDisallows(String allow){
+        disallows.add(allow);
+    }
 }

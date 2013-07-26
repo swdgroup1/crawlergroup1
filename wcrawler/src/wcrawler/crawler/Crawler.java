@@ -222,13 +222,15 @@ public class Crawler implements Runnable {
                     continue;
                 try {
                     PageToCrawl pageToCrawl = new PageToCrawl();
-                    System.out.println("add to queue "+url);
+                    //System.out.println("add to queue "+url);
                     URL webUrl = new URL(url);
                     pageToCrawl.setAbsoluteUrl(url);
                     pageToCrawl.setIsRoot(false);
                     pageToCrawl.setIsRetry(false);
                     pageToCrawl.setUrl(webUrl);
 
+                    //TO-DO: USING DECISION MAKER                    
+                    
                     pageToSchedule.add(pageToCrawl);
 
                 } catch (MalformedURLException ex) {

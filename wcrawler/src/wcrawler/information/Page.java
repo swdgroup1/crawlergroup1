@@ -23,6 +23,34 @@ public class Page {
     
     private URL url;
     private String absoluteUrl;
+    
+    private boolean allowDownload;
+    private boolean containLink;
+    private boolean contaiInformation;
+
+    public boolean isAllowDownload() {
+        return allowDownload;
+    }
+
+    public void setAllowDownload(boolean allowDownload) {
+        this.allowDownload = allowDownload;
+    }
+
+    public boolean isContainLink() {
+        return containLink;
+    }
+
+    public void setContainLink(boolean containLink) {
+        this.containLink = containLink;
+    }
+
+    public boolean isContaiInformation() {
+        return contaiInformation;
+    }
+
+    public void setContaiInformation(boolean contaiInformation) {
+        this.contaiInformation = contaiInformation;
+    }
 
     public String getAbsoluteUrl() {
         return absoluteUrl;
