@@ -58,6 +58,7 @@ public class CrawlConfigurationHandler {
                 String maxConnectionPerHost = "";
                 String maxDownloadPageSize = "";
                 String maxConcurrentThread = "";
+                String maxTotalConnections ="";
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     //Set value 
@@ -66,6 +67,7 @@ public class CrawlConfigurationHandler {
                     maxConnectionPerHost = getValue("maxConnectionPerHost", element);
                     maxDownloadPageSize = getValue("maxDownloadPageSize", element);
                     maxConcurrentThread = getValue("maxConcurrentThread", element);
+                    maxTotalConnections = getValue("maxTotalConnections", element);
                 }
                 //Set value into  crawlConfiguration
                 crawlConfiguration.setPolitenessDelay(Integer.parseInt(politenessDelay));
@@ -73,7 +75,7 @@ public class CrawlConfigurationHandler {
                 crawlConfiguration.setMaxConnectionPerHost(Integer.parseInt(maxConnectionPerHost));
                 crawlConfiguration.setMaxDownloadPageSize(Integer.parseInt(maxDownloadPageSize));
                 crawlConfiguration.setMaxConcurrentThread(Integer.parseInt(maxConcurrentThread));
-
+                crawlConfiguration.setMaxTotalConnections(Integer.parseInt(maxTotalConnections));
             }
 
         } catch (ParserConfigurationException | SAXException | IOException ex) {
