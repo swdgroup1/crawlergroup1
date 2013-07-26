@@ -21,7 +21,7 @@ public class WcrawlerManager extends javax.swing.JFrame {
     private frmCrawlerOption crawlerOption;
     private CrawlCreator crawlCreator;
     private CrawlConfiguration crawlConfiguration;
-    
+
     /**
      * Creates new form WcrawlerManager
      */
@@ -33,16 +33,16 @@ public class WcrawlerManager extends javax.swing.JFrame {
         //display in the center of screen
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-           
+
         //load config
         CrawlConfigurationHandler crawlConfigurationHandler = new CrawlConfigurationHandler();
         crawlConfiguration = crawlConfigurationHandler.loadCrawlConfigFromXml();
-        
+
         //creat start and option form
-        crawlerStart = new FrmCrawlerStart(this,crawlConfiguration);
+        crawlerStart = new FrmCrawlerStart(this, crawlConfiguration);
         crawlerStart.setVisible(false);
 
-        crawlerOption = new frmCrawlerOption(this,crawlConfiguration);
+        crawlerOption = new frmCrawlerOption(this, crawlConfiguration);
         crawlerOption.setVisible(false);
 
         //Set Button enable when formload
@@ -52,7 +52,7 @@ public class WcrawlerManager extends javax.swing.JFrame {
         btnStop.setEnabled(false);
         btnOption.setEnabled(true);
         //init other form
-        
+
     }
 
     /**
@@ -235,11 +235,11 @@ public class WcrawlerManager extends javax.swing.JFrame {
     }//GEN-LAST:event_btnOptionActionPerformed
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
-       crawlerStart.setVisible(true);
-        crawlerStart.Create();
-       
+        crawlerStart.setVisible(true);
+        //crawlerStart.Create();
+
         this.setEnabled(false);
-        
+
         //Set enable button pause, resume, stops is true
         btnPause.setEnabled(true);
         btnStop.setEnabled(true);
@@ -288,4 +288,10 @@ public class WcrawlerManager extends javax.swing.JFrame {
     private javax.swing.JLabel lbStop;
     private javax.swing.JPanel pnlCrawler;
     // End of variables declaration//GEN-END:variables
+
+    public void start() {
+        crawlCreator = new CrawlCreator(crawlConfiguration,crawlerStart.getCrawlFilterPattern(),crawlerStart.getSelectedURL());
+        crawlCreator.addSeed(crawlerStart.getSelectedURL());
+        crawlCreator.createCrawler(1);
+    }
 }

@@ -246,6 +246,7 @@ public class FrmCrawlerStart extends javax.swing.JFrame {
             crawlFilterPattern.getDisallows().add(tokenizer.nextToken());
         }
         
+        wcrawlerManager.start();
         returnToManager();
     }//GEN-LAST:event_btnOKActionPerformed
 

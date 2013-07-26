@@ -31,6 +31,9 @@ public class MultiThreadManager {
     }  
     
     synchronized public void start(){
+        if(state== State.Running){
+            return;
+        }
         //execute all task in queue
         for(Runnable task:taskToRun){
             executor.execute(task);
@@ -51,6 +54,9 @@ public class MultiThreadManager {
     }
     
     synchronized public void stop(){
+        if(state== State.Ready){
+            return;
+        }
         //stop executor
         executor.shutdown();
         

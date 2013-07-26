@@ -80,6 +80,7 @@ public class PageRequester implements IPageRequester {
             crawledPage.setResponseCode(connection.getResponseCode());
             crawledPage.setResponseMessage(connection.getResponseMessage());
             crawledPage.setPageSizeInBytes(stringBuilder.toString().getBytes("UTF-8").length);
+            crawledPage.setAbsoluteUrl(page.getAbsoluteUrl());
 
             return crawledPage;
 

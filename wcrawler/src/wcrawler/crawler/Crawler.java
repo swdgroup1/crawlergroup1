@@ -42,7 +42,9 @@ public class Crawler implements Runnable {
     public Crawler() {
     }
 
-    public Crawler(IPageRequester pageRequester, IScheduler scheduler, IHyperLinkParser hyperLinkParser, ICrawlDecisionMaker crawlDecisionMaker, CrawlConfiguration crawlConfiguration) {
+    public Crawler(IPageRequester pageRequester, IScheduler scheduler, IHyperLinkParser hyperLinkParser, 
+            ICrawlDecisionMaker crawlDecisionMaker, CrawlConfiguration crawlConfiguration, 
+            MultiThreadManager threadManager) {
         this.pageRequester = pageRequester;
         this.scheduler = scheduler;
         this.hyperLinkParser = hyperLinkParser;
@@ -50,7 +52,7 @@ public class Crawler implements Runnable {
         this.crawlConfiguration = crawlConfiguration;
 
         isCompleted = false;
-        threadManager = new MultiThreadManager(crawlConfiguration.getMaxConcurrentThread());
+        this.threadManager = threadManager;
 
         crawlContext = new CrawlContext();
     }
@@ -72,22 +74,23 @@ public class Crawler implements Runnable {
         //_logger.info("About to crawl site: " + page.getAbsoluteUrl());
 
         // This loops will create a number of threads to do "processPage", 1 thread = 1 processPage
-        if (!isCompleted) {
+        while (!isCompleted) {
             if (scheduler.getNumberOfPageToCrawl() > 0) {
                 // Create runnable 
+                System.out.println("create processPage");
                 Runnable task = new Runnable() {
                     @Override
                     public void run() {
                         PageToCrawl page = scheduler.getNextPageToCrawl();
-                        System.out.println("Page to crawl: "+page.getAbsoluteUrl());
+                        System.out.println("Page to crawl: " + page.getAbsoluteUrl());
                         processPage(page);
                     }
                 };
                 threadManager.addTask(task);
-            }else{
+            } else {
                 isCompleted = false;
             }
-            
+
             if (threadManager.isExecutorTerminated()) {
                 isCompleted = false;
             }
@@ -108,27 +111,21 @@ public class Crawler implements Runnable {
      * @param page: page to crawl
      */
     private void processPage(PageToCrawl page) {
-        try {
             if (page == null) {
                 return;
             }
 
-            if (!allowToCrawlPage(page, crawlContext)) {
-                return;
-            }
+        if (!allowToCrawlPage(page, crawlContext)) {
+            return;
+        }
 
             CrawledPage crawledPage = crawlPage(page);
-            Thread.sleep(10000);
-            crawl();
-            
+
             if (crawledPage != null) {
                 if (allowToCrawlPageLinks(crawledPage, crawlContext)) {
                     scheduleUrls(crawledPage);
                 }
             }
-        } catch (InterruptedException ex) {
-            java.util.logging.Logger.getLogger(Crawler.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
     }
 
@@ -212,32 +209,36 @@ public class Crawler implements Runnable {
      * @param: page CrawledPage
      */
     private void scheduleUrls(CrawledPage page) {
+        System.out.println("Scheduler page " + page.getAbsoluteUrl());
         List<String> urls = hyperLinkParser.getUrls(page, null);
 
-        List<PageToCrawl> pageToSchedule = new ArrayList<>();
+        //List<PageToCrawl> pageToSchedule = new ArrayList<>();
 
         if (urls != null) {
             for (String url : urls) {
-                if(url==null||url.trim().length()==0)
+                if (url == null || url.trim().length() == 0) {
                     continue;
+                }
                 try {
                     PageToCrawl pageToCrawl = new PageToCrawl();
-                    //System.out.println("add to queue "+url);
                     URL webUrl = new URL(url);
                     pageToCrawl.setAbsoluteUrl(url);
                     pageToCrawl.setIsRoot(false);
                     pageToCrawl.setIsRetry(false);
-                    pageToCrawl.setUrl(webUrl);
+                    pageToCrawl.setUrl(webUrl);             
 
-                    //TO-DO: USING DECISION MAKER                    
-                    
-                    pageToSchedule.add(pageToCrawl);
+                    //pageToSchedule.add(pageToCrawl);
+                    if (allowToCrawlPage(pageToCrawl, crawlContext)) {
+                        System.out.println("add to queue "+url);
+                        scheduler.addPage(pageToCrawl);
+                        crawlContext.addQueuedPage(url);
+                    }
 
                 } catch (MalformedURLException ex) {
                     java.util.logging.Logger.getLogger(Crawler.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            scheduler.addPagesToCrawl(pageToSchedule);
+            //scheduler.addPagesToCrawl(pageToSchedule);
         }
     }
 

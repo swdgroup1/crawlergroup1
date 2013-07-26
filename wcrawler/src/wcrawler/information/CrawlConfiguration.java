@@ -33,7 +33,7 @@ public class CrawlConfiguration {
 
     public ArrayList<String> getSeedList() {
         ArrayList<String> list = new ArrayList<>();
-        list.add("www.drugs.com");
+        list.add("http://www.drugs.com");
         list.add("en.wikipedia.com");
         return list;
         //return seedList;

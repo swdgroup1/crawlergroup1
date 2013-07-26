@@ -35,7 +35,9 @@ public class CrawlContext {
         this.crawlFilterPattern = new CrawlFilterPattern();
     }
 
-    
+    public void addQueuedPage(String url){
+        queuedPages.add(url);
+    }
     
     public ConcurrentSkipListSet<String> getQueuedPages() {
         return queuedPages;

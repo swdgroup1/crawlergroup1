@@ -14,6 +14,7 @@ package wcrawler.crawler;
 // This class handles creating "Crawler"
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.ConcurrentSkipListSet;
 import org.apache.log4j.Logger;
 import wcrawler._interface.ICrawlDecisionMaker;
 import wcrawler._interface.IHyperLinkParser;
@@ -26,6 +27,8 @@ import wcrawler.core.JsoupHyperLinkParser;
 import wcrawler.core.PageRequester;
 import wcrawler.information.CrawlConfiguration;
 import wcrawler.information.PageToCrawl;
+import wcrawler.information.CrawlFilterPattern;
+import wcrawler.robotstxt.*;
 
 public class CrawlCreator {
 
@@ -37,11 +40,32 @@ public class CrawlCreator {
     private MultiThreadManager threadManager;
     static Logger _logger = Logger.getLogger(CrawlCreator.class);
 
-    public CrawlCreator(CrawlConfiguration crawlConfiguration) {
+    public CrawlCreator(CrawlConfiguration crawlConfiguration,CrawlFilterPattern crawlFilterPattern,String domain) {
         this.pageRequester = new PageRequester();
         this.scheduler = new FIFOScheduler();
         this.hyperLinkParser = new JsoupHyperLinkParser();
-        this.crawlDecisionMaker = new CrawlDecisionMaker(null,null,null,null,null,null);
+        
+        /**
+         * Get information from robots.txt
+         */
+        try{
+            
+            RobotstxtLoader robotstxtLoader = new RobotstxtLoader();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+                      
+        /**
+         * Add dummy containLinkPattern and contain InformaitonPattern
+         */
+        ConcurrentSkipListSet<String> containLinkPattern = new ConcurrentSkipListSet<>();
+        ConcurrentSkipListSet<String> containInformationPattern = new ConcurrentSkipListSet<>();
+        containLinkPattern.add("http://");
+        containInformationPattern.add("http://");
+        
+        this.crawlDecisionMaker = new CrawlDecisionMaker(null, null, containLinkPattern, 
+                containInformationPattern, crawlFilterPattern.getAllows(), crawlFilterPattern.getDisallows());
+        
         this.crawlConfiguration = crawlConfiguration;
         this.threadManager = new MultiThreadManager(crawlConfiguration.getMaxConcurrentThread());
     }
@@ -64,6 +88,7 @@ public class CrawlCreator {
             page.setUrl(_url);
 
             // add to queue
+            
             scheduler.addPage(page);
         } catch (MalformedURLException ex) {
             _logger.error("Problem with setting URL", ex);
@@ -78,7 +103,7 @@ public class CrawlCreator {
     public void createCrawler(int numberOfCrawlers) {
 
         for (int i = 1; i <= numberOfCrawlers; i++) {
-            Crawler crawler = new Crawler(pageRequester, scheduler, hyperLinkParser, crawlDecisionMaker, crawlConfiguration);
+            Crawler crawler = new Crawler(pageRequester, new FIFOScheduler(), hyperLinkParser, crawlDecisionMaker, crawlConfiguration,threadManager);
             threadManager.addTask(crawler);
             _logger.info("Add Crawler " + i + " to list ");
         }
@@ -88,14 +113,14 @@ public class CrawlCreator {
     }
     
     public static void main(String[] args){
-        CrawlConfigurationHandler crawlConfigurationHandler = new CrawlConfigurationHandler();
-        CrawlConfiguration crawlConfig = crawlConfigurationHandler.loadCrawlConfigFromXml();
-        
-        CrawlCreator crawlCreator = new CrawlCreator(crawlConfig);
-        crawlCreator.addSeed("http://www.drugs.com");
-        crawlCreator.addSeed("http://www.stackoverflow.com");
-        crawlCreator.addSeed("http://www.drugs.com/mtm");
-        
-        crawlCreator.createCrawler(1);
+//        CrawlConfigurationHandler crawlConfigurationHandler = new CrawlConfigurationHandler();
+//        CrawlConfiguration crawlConfig = crawlConfigurationHandler.loadCrawlConfigFromXml();
+//        
+//        CrawlCreator crawlCreator = new CrawlCreator(crawlConfig);
+//        crawlCreator.addSeed("http://www.drugs.com");
+//        crawlCreator.addSeed("http://www.stackoverflow.com");
+//        crawlCreator.addSeed("http://www.drugs.com/mtm");
+//        
+//        crawlCreator.createCrawler(1);
     }
 }
