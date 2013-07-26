@@ -59,6 +59,7 @@ public class CrawlConfigurationHandler {
                 String maxDownloadPageSize = "";
                 String maxConcurrentThread = "";
                 String maxTotalConnections ="";
+                String politenessPolicyEnable="";
                  //for my sql database
                 String driver ="";
                 String url ="";
@@ -74,6 +75,7 @@ public class CrawlConfigurationHandler {
                     maxDownloadPageSize = getValue("maxDownloadPageSize", element);
                     maxConcurrentThread = getValue("maxConcurrentThread", element);
                     maxTotalConnections = getValue("maxTotalConnections", element);
+                    politenessPolicyEnable = getValue("politenessPolicyEnable", element);
                     //For connnect Mysql Database
                     driver = getValue("driver", element);
                     url = getValue("url", element);
@@ -88,6 +90,7 @@ public class CrawlConfigurationHandler {
                 crawlConfiguration.setMaxDownloadPageSize(Integer.parseInt(maxDownloadPageSize));
                 crawlConfiguration.setMaxConcurrentThread(Integer.parseInt(maxConcurrentThread));
                 crawlConfiguration.setMaxTotalConnections(Integer.parseInt(maxTotalConnections));
+                crawlConfiguration.setPolitenessPolicyEnable("true".equals(politenessPolicyEnable)? true: false);
                 //Set value for database
                 crawlConfiguration.setDriver(driver);
                 crawlConfiguration.setUrl(url);

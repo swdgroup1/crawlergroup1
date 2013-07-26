@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.log4j.Logger;
 import wcrawler._interface.IScheduler;
+import static wcrawler.core.FIFOScheduler._logger;
 import wcrawler.information.PageToCrawl;
 
 public class FIFOScheduler implements IScheduler {
@@ -34,6 +35,7 @@ public class FIFOScheduler implements IScheduler {
      */
     @Override
     public PageToCrawl getNextPageToCrawl() {
+
         PageToCrawl pageToCrawl = null;
         if (_pageToCrawl.size() > 0) {
             pageToCrawl = _pageToCrawl.poll();
@@ -58,10 +60,11 @@ public class FIFOScheduler implements IScheduler {
             _logger.debug("This list of pages is empty");
             return;
         }
-
+       
         for (PageToCrawl p : pages) {
             addPage(p);
         }
+        _logger.debug("Queue size: "+_pageToCrawl.size());
     }
 
     /**

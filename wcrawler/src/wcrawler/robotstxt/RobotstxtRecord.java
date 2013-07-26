@@ -13,14 +13,14 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class RobotstxtRecord {
     private ArrayList<String> userAgents;
-    private ConcurrentSkipListSet<String> disallows;
-    private ConcurrentSkipListSet<String> allows;
+    private ArrayList<String> disallows;
+    private ArrayList<String> allows;
     private int crawlDelay;
 
     public RobotstxtRecord() {
         userAgents = new ArrayList<>();
-        disallows = new ConcurrentSkipListSet<>();
-        allows = new ConcurrentSkipListSet<>();
+        disallows = new ArrayList<>();
+        allows = new ArrayList<>();
         crawlDelay = -1;
     }
 
@@ -32,19 +32,19 @@ public class RobotstxtRecord {
         this.userAgents = userAgents;
     }
 
-    public ConcurrentSkipListSet<String> getDisallows() {
+    public ArrayList<String> getDisallows() {
         return disallows;
     }
 
-    public void setDisallows(ConcurrentSkipListSet<String> disallows) {
+    public void setDisallows(ArrayList<String> disallows) {
         this.disallows = disallows;
     }
 
-    public ConcurrentSkipListSet<String> getAllow() {
+    public ArrayList<String> getAllow() {
         return allows;
     }
 
-    public void setAllow(ConcurrentSkipListSet<String> allows) {
+    public void setAllow(ArrayList<String> allows) {
         this.allows = allows;
     }
 

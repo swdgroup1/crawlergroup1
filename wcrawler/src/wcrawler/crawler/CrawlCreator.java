@@ -12,9 +12,15 @@
 package wcrawler.crawler;
 
 // This class handles creating "Crawler"
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import org.apache.log4j.Logger;
 import wcrawler._interface.ICrawlDecisionMaker;
 import wcrawler._interface.IHyperLinkParser;
@@ -25,10 +31,14 @@ import wcrawler.core.CrawlDecisionMaker;
 import wcrawler.core.FIFOScheduler;
 import wcrawler.core.JsoupHyperLinkParser;
 import wcrawler.core.PageRequester;
+import static wcrawler.crawler.CrawlCreator._logger;
 import wcrawler.information.CrawlConfiguration;
-import wcrawler.information.PageToCrawl;
 import wcrawler.information.CrawlFilterPattern;
-import wcrawler.robotstxt.*;
+import wcrawler.information.CrawledPage;
+import wcrawler.information.PageToCrawl;
+import wcrawler.robotstxt.Robotstxt;
+import wcrawler.robotstxt.RobotstxtLoader;
+import wcrawler.robotstxt.RobotstxtRecord;
 
 public class CrawlCreator {
 
@@ -38,20 +48,18 @@ public class CrawlCreator {
     private ICrawlDecisionMaker crawlDecisionMaker;
     private CrawlConfiguration crawlConfiguration;
     private MultiThreadManager threadManager;
+    private List<String> robotstxtAllow;
+    private List<String> robotstxtDisallow;
+    private List<String> containLinkPattern;
+    private List<String> containInformationPattern;
+    private List<String> filterAllow;
+    private List<String> filterDisallow;
     static Logger _logger = Logger.getLogger(CrawlCreator.class);
 
-    public CrawlCreator(CrawlConfiguration crawlConfiguration,CrawlFilterPattern crawlFilterPattern) {
+    public CrawlCreator(CrawlConfiguration crawlConfiguration, CrawlFilterPattern crawlFilterPattern) {
         this.threadManager = new MultiThreadManager(crawlConfiguration.getMaxConcurrentThread());
         this.hyperLinkParser = new JsoupHyperLinkParser();
-        
-        /**
-         * TO DO: Get information from robots.txt
-         */
-        
-        this.crawlDecisionMaker = new CrawlDecisionMaker(null, null, crawlConfiguration.getContainLinkPattern(), 
-                crawlConfiguration.getContainInformationPattern(), 
-                crawlFilterPattern.getAllows(), crawlFilterPattern.getDisallows());
-        
+//        this.crawlDecisionMaker = new CrawlDecisionMaker(null, null, null, null, null, null);
         this.crawlConfiguration = crawlConfiguration;
     }
 
@@ -67,17 +75,26 @@ public class CrawlCreator {
         scheduler = new FIFOScheduler();
         pageRequester = new PageRequester();
         PageToCrawl page = new PageToCrawl();
+
         try {
             URL _url = new URL(url);
             page.setAbsoluteUrl(url);
             page.setIsRoot(true);
             page.setUrl(_url);
 
+            if (crawlConfiguration.isPolitenessPolicyEnable()) {
+                // Processing politeness policy
+                respectPolitenessPolicyHandler(url);
+            }
+
+            getFilterPattern();
+
+            crawlDecisionMaker = new CrawlDecisionMaker(robotstxtAllow, robotstxtDisallow, containLinkPattern, containInformationPattern, filterAllow, filterDisallow);
             // add to queue
-            
             scheduler.addPage(page);
-            Crawler crawler = new Crawler(pageRequester, scheduler, hyperLinkParser, crawlDecisionMaker, crawlConfiguration, threadManager);
+            Crawler crawler = new Crawler(pageRequester, scheduler, hyperLinkParser, crawlDecisionMaker, crawlConfiguration);
             threadManager.addTask(crawler);
+
 
             _logger.info("Add Crawler to list ");
         } catch (MalformedURLException ex) {
@@ -86,47 +103,77 @@ public class CrawlCreator {
     }
 
     /**
-     * Creates crawlers and then adds them to executor list
-     *
-     * @param numberOfCrawlers number of crawlers wants to create
+     * reads information from robots.txt to set up rate limiter based on
+     * crawl-delay and set up list of directory which is not allowed
      */
-    public void createCrawler(int numberOfCrawlers) {
+    private void respectPolitenessPolicyHandler(String url) throws MalformedURLException {
+        PageToCrawl page = new PageToCrawl();
+        URL _url = new URL(url);
+        page.setAbsoluteUrl(url + "/robots.txt");
+        page.setIsRoot(true);
 
-        for (int i = 1; i <= numberOfCrawlers; i++) {
-            Crawler crawler = new Crawler(pageRequester, new FIFOScheduler(), hyperLinkParser, crawlDecisionMaker, crawlConfiguration,threadManager);
-            threadManager.addTask(crawler);
-            _logger.info("Add Crawler " + i + " to list ");
+        CrawledPage crawledPage = pageRequester.fetchPage(page, crawlConfiguration);
+
+        RobotstxtLoader robotstxtLoader = new RobotstxtLoader();
+        Robotstxt robotstxt = robotstxtLoader.loadRobotstxt(crawledPage.getRawContent());
+        if (robotstxt != null) {
+            RobotstxtRecord robotstxtRecord = robotstxt.getRecord("*");
+            if (robotstxtRecord != null) {
+                robotstxtAllow = robotstxtRecord.getAllow();
+                robotstxtDisallow = robotstxtRecord.getDisallows();
+            }
+        }
+    }
+    final static Charset ENCODING = StandardCharsets.UTF_8;
+
+    private void getFilterPattern() {
+        try {
+
+            // Contain Link Pattern
+            containLinkPattern = readTextFile("linkpattern.txt");
+            // Contain Information Pattern
+            containInformationPattern = readTextFile("infopattern.txt");
+            // FilterAllow
+            filterAllow = readTextFile("allowpattern.txt");
+            // Filter Disallow
+            filterDisallow = readTextFile("disallowpattern.txt");
+
+        } catch (IOException ex) {
+            _logger.error(ex.getMessage());
         }
 
-        // Start thread manager
+    }
+
+    private List<String> readTextFile(String aFileName) throws IOException {
+        Path path = Paths.get(aFileName);
+        return Files.readAllLines(path, ENCODING);
+    }
+
+    public void start() {
         threadManager.start();
     }
-    
-    public void start(){
-        threadManager.start();
-    }
-    
-    public void pause(){
+
+    public void pause() {
         threadManager.pause();
     }
-    
-    public void resume(){
+
+    public void resume() {
         threadManager.resume();
     }
-    
-    public void stop(){
+
+    public void stop() {
         threadManager.stop();
     }
-    
-    public static void main(String[] args){
+
+    public static void main(String[] args) {
 //        CrawlConfigurationHandler crawlConfigurationHandler = new CrawlConfigurationHandler();
 //        CrawlConfiguration crawlConfig = crawlConfigurationHandler.loadCrawlConfigFromXml();
-//        
+//
 //        CrawlCreator crawlCreator = new CrawlCreator(crawlConfig);
 //        crawlCreator.addSeed("http://www.drugs.com");
 //        crawlCreator.addSeed("http://www.stackoverflow.com");
-//        crawlCreator.addSeed("http://www.drugs.com/mtm");
-//        
-//        crawlCreator.createCrawler(1);
+//
+//        // Start thread manager
+//        crawlCreator.threadManager.start();
     }
 }

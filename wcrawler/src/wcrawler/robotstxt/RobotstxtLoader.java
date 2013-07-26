@@ -17,6 +17,9 @@ package wcrawler.robotstxt;
 // Read data from file robots.txt of website
 
 import java.util.StringTokenizer;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 public class RobotstxtLoader {
     private StringTokenizer tokenizer;
@@ -41,7 +44,18 @@ public class RobotstxtLoader {
         return null;
     }
     public Robotstxt loadRobotstxt(String content){
+        
         Robotstxt robotstxt = new Robotstxt();
+        
+        Document doc = Jsoup.parse(content);
+        
+//        Elements contentElement = doc.select("div.contentBox");
+//        Elements titleElement = doc.select("div.titleAudio clearAfter > h1");
+//               
+//        String drugsInfo = contentElement.text();
+//        
+//        String title = titleElement.text();
+        content = doc.text();                
         
         //parse the file line by line
         tokenizer = new StringTokenizer(content, "\n");
@@ -50,15 +64,15 @@ public class RobotstxtLoader {
         //parse the file record by record
         while(line!=null){
             //ignore all un-supported directives before a new record
-            while(!line.startsWith("User-agent:")){
+            while(line != null && !line.startsWith("User-agent:")){
                 line = nextLine();
             }
             
             //start new record
             RobotstxtRecord record = new RobotstxtRecord();
-            
+            System.out.println(line);
             //get all user agents, they are always on top of a record
-            while(line.startsWith("User-agent:")){
+            while(line!=null && line.startsWith("User-agent:")){
                 record.addUserAgent(line.substring(11).trim());
                 line = nextLine();
             }

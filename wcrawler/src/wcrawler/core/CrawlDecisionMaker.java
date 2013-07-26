@@ -12,7 +12,7 @@
 package wcrawler.core;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentSkipListSet;
 import wcrawler._interface.ICrawlDecisionMaker;
 import wcrawler.information.CrawlContext;
@@ -22,16 +22,14 @@ import wcrawler.information.PageToCrawl;
 
 public class CrawlDecisionMaker implements ICrawlDecisionMaker {
 
-    private ArrayList<String> robotstxtAllow;
-    private ArrayList<String> robotstxtDisallow;
-    private ArrayList<String> containLinkPattern;
-    private ArrayList<String> containInformationPattern;
-    private ArrayList<String> filterAllow;
-    private ArrayList<String> filterDisallow;
+    private List<String> robotstxtAllow;
+    private List<String> robotstxtDisallow;
+    private List<String> containLinkPattern;
+    private List<String> containInformationPattern;
+    private List<String> filterAllow;
+    private List<String> filterDisallow;
 
-    public CrawlDecisionMaker(ArrayList<String> robotstxtAllow, ArrayList<String> robotstxtDisallow, 
-            ArrayList<String> containLinkPattern, ArrayList<String> containInformationPattern, 
-            ArrayList<String> filterAllow, ArrayList<String> filterDisallow) {
+    public CrawlDecisionMaker(List<String> robotstxtAllow, List<String> robotstxtDisallow, List<String> containLinkPattern, List<String> containInformationPattern, List<String> filterAllow, List<String> filterDisallow) {
         this.robotstxtAllow = robotstxtAllow != null ? robotstxtAllow : new ArrayList<String>();
         this.robotstxtDisallow = robotstxtDisallow != null ? robotstxtDisallow : new ArrayList<String>();
         this.containLinkPattern = containLinkPattern != null ? containLinkPattern : new ArrayList<String>();
@@ -41,7 +39,21 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
     }
 
     //check whether an url is in a list
-    private boolean isMatchedPattern(String absoluteUrl, Collection<String> patternList) {
+    private boolean isMatchedPattern(String absoluteUrl, ConcurrentSkipListSet<String> patternList) {
+        if (patternList.size() < 0) {
+            return false;
+        }
+
+        for (String pattern : patternList) {
+            if (absoluteUrl.startsWith(pattern)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isMatchedPattern(String absoluteUrl, List<String> patternList) {
         if (patternList.size() < 0) {
             return false;
         }
@@ -56,7 +68,7 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
     }
 
     //check whether an url is allowed according to a set of allow and disallow rules
-    private boolean isAllowed(String absoluteUrl, Collection<String> allows, Collection<String> disallows) {
+    private boolean isAllowed(String absoluteUrl, List<String> allows, List<String> disallows) {
         //find the longest matched allow rule
         String longestAllow = "";
         for (String allow : allows) {
@@ -84,11 +96,16 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
     public CrawlDecision crawlPageDecision(PageToCrawl page, CrawlContext context) {
         String absoluteUrl = page.getAbsoluteUrl();
 
+
         //get all queued pages at current time
         ConcurrentSkipListSet<String> queuedPages = context.getQueuedPages();
 
         CrawlDecision decision = new CrawlDecision();
 
+        if (absoluteUrl == null) {
+            decision.setAllow(false);
+            return decision;
+        }
         //default decision is NOT
         decision.setAllow(false);
 
@@ -109,16 +126,20 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
         } else {
             decision.setAllow(true);
         }
-        
+
         return decision;
     }
 
     @Override
     //check whether an url is contain useful hyperlinks
     public CrawlDecision crawlPageLinksDecision(CrawledPage page, CrawlContext context) {
-        String absoluteUrl = page.getAbsoluteUrl();
-
         CrawlDecision decision = new CrawlDecision();
+
+        String absoluteUrl = page.getAbsoluteUrl();
+        if (absoluteUrl == null) {
+            decision.setAllow(false);
+            return decision;
+        }
         decision.setAllow(isMatchedPattern(absoluteUrl, containLinkPattern));
 
         decision.setAllow(true);
@@ -128,9 +149,14 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
     @Override
     //check whether an url is contain useful information to scrap
     public CrawlDecision downloadPageContentDecision(CrawledPage page, CrawlContext context) {
-        String absoluteUrl = page.getAbsoluteUrl();
-
         CrawlDecision decision = new CrawlDecision();
+
+        String absoluteUrl = page.getAbsoluteUrl();
+        if (absoluteUrl == null) {
+            decision.setAllow(false);
+            return decision;
+        }
+
         decision.setAllow(isMatchedPattern(absoluteUrl, containInformationPattern));
 
         decision.setAllow(true);

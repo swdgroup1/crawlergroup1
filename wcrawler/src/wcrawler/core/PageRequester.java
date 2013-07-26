@@ -11,13 +11,11 @@
  */
 package wcrawler.core;
 
-import wcrawler.crawler.CrawlCreator;
 import org.apache.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -55,7 +53,7 @@ public class PageRequester implements IPageRequester {
                 }
 
                 long af = System.currentTimeMillis();
-                System.out.println("Delay in " + (config.getPolitenessDelay() - (now - lastFetchTime)) + " ms");
+                _logger.debug("Delay in " + (config.getPolitenessDelay() - (now - lastFetchTime)) + " ms");
             }
 
             // create the HttpURLConnection
@@ -94,7 +92,6 @@ public class PageRequester implements IPageRequester {
             crawledPage.setResponseCode(connection.getResponseCode());
             crawledPage.setResponseMessage(connection.getResponseMessage());
             crawledPage.setPageSizeInBytes(stringBuilder.toString().getBytes("UTF-8").length);
-            crawledPage.setAbsoluteUrl(page.getAbsoluteUrl());
 
             return crawledPage;
 
