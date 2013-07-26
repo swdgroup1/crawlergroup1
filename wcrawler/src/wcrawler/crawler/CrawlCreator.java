@@ -38,12 +38,10 @@ public class CrawlCreator {
     static Logger _logger = Logger.getLogger(CrawlCreator.class);
 
     public CrawlCreator(CrawlConfiguration crawlConfiguration) {
-        this.pageRequester = new PageRequester();
-        this.scheduler = new FIFOScheduler();
-        this.hyperLinkParser = new JsoupHyperLinkParser();
-        this.crawlDecisionMaker = new CrawlDecisionMaker(null,null,null,null,null,null);
-        this.crawlConfiguration = crawlConfiguration;
         this.threadManager = new MultiThreadManager(crawlConfiguration.getMaxConcurrentThread());
+        this.hyperLinkParser = new JsoupHyperLinkParser();
+        this.crawlDecisionMaker = new CrawlDecisionMaker(null, null, null, null, null, null);
+        this.crawlConfiguration = crawlConfiguration;
     }
 
     /**
@@ -55,7 +53,8 @@ public class CrawlCreator {
     public void addSeed(String url) {
 
         // Check robotstxt about this directory, allow or not
-
+        scheduler = new FIFOScheduler();
+        pageRequester = new PageRequester();
         PageToCrawl page = new PageToCrawl();
         try {
             URL _url = new URL(url);
@@ -65,37 +64,24 @@ public class CrawlCreator {
 
             // add to queue
             scheduler.addPage(page);
+            Crawler crawler = new Crawler(pageRequester, scheduler, hyperLinkParser, crawlDecisionMaker, crawlConfiguration);
+            threadManager.addTask(crawler);
+
+            _logger.info("Add Crawler to list ");
         } catch (MalformedURLException ex) {
             _logger.error("Problem with setting URL", ex);
         }
     }
 
-    /**
-     * Creates crawlers and then adds them to executor list
-     *
-     * @param numberOfCrawlers number of crawlers wants to create
-     */
-    public void createCrawler(int numberOfCrawlers) {
-
-        for (int i = 1; i <= numberOfCrawlers; i++) {
-            Crawler crawler = new Crawler(pageRequester, scheduler, hyperLinkParser, crawlDecisionMaker, crawlConfiguration);
-            threadManager.addTask(crawler);
-            _logger.info("Add Crawler " + i + " to list ");
-        }
-
-        // Start thread manager
-        threadManager.start();
-    }
-    
-    public static void main(String[] args){
+    public static void main(String[] args) {
         CrawlConfigurationHandler crawlConfigurationHandler = new CrawlConfigurationHandler();
         CrawlConfiguration crawlConfig = crawlConfigurationHandler.loadCrawlConfigFromXml();
-        
+
         CrawlCreator crawlCreator = new CrawlCreator(crawlConfig);
         crawlCreator.addSeed("http://www.drugs.com");
         crawlCreator.addSeed("http://www.stackoverflow.com");
-        crawlCreator.addSeed("http://www.drugs.com/mtm");
-        
-        crawlCreator.createCrawler(1);
+
+        // Start thread manager
+        crawlCreator.threadManager.start();
     }
 }
