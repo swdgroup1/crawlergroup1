@@ -6,6 +6,8 @@ package wcrawler.GUI;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import wcrawler.core.CrawlConfigurationHandler;
 import wcrawler.information.CrawlConfiguration;
 
@@ -16,7 +18,6 @@ import wcrawler.information.CrawlConfiguration;
 public class frmCrawlerOption extends javax.swing.JFrame {
 
     private CrawlConfiguration crawlConfiguration;
-    private CrawlConfigurationHandler crawlConfigurationHandler;
     private WcrawlerManager wcrawlerManager;
     private final String politenessDelay = "politenessDelay";
     private final String connectionTimeout = "connectionTimeout";
@@ -29,19 +30,29 @@ public class frmCrawlerOption extends javax.swing.JFrame {
     /**
      * Creates new form frmCrawlerOption
      */
-    public frmCrawlerOption() {
+    public frmCrawlerOption(WcrawlerManager manager, CrawlConfiguration crawlConfiguration) {
         initComponents();
+
+        this.setDefaultCloseOperation(HIDE_ON_CLOSE);
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                wcrawlerManager.setEnabled(true);
+            }
+        });
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
 
-        crawlConfigurationHandler = new CrawlConfigurationHandler();
-        crawlConfiguration = crawlConfigurationHandler.loadCrawlConfigFromXml();
-        LoadValue();
+        this.wcrawlerManager = manager;
+        this.crawlConfiguration = crawlConfiguration;
+        loadValue();
     }
 
     //Load value from file config.xml
-    private void LoadValue() {
+    private void loadValue() {
         txtPolitenessDelay.setText(String.valueOf(crawlConfiguration.getPolitenessDelay()));
         txtMaxConnectionPerHost.setText(String.valueOf(crawlConfiguration.getMaxConnectionPerHost()));
         txtConnectionTimeout.setText(String.valueOf(crawlConfiguration.getConnectionTimeout()));
@@ -207,40 +218,45 @@ public class frmCrawlerOption extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        // TODO add your handling code here:
-        //Update file config
-//        try {
-        //Update politenessDelay
-        crawlConfigurationHandler.updateCrawlConfigXml(politenessDelay, Integer.parseInt(txtPolitenessDelay.getText()));
-        //Update connectionTimeout
-        crawlConfigurationHandler.updateCrawlConfigXml(connectionTimeout, Integer.parseInt(txtConnectionTimeout.getText()));
-        //Update maxConnectionPerHost
-        crawlConfigurationHandler.updateCrawlConfigXml(maxConnectionPerHost, Integer.parseInt(txtMaxConnectionPerHost.getText()));
-        //Update maxTotalConnections
-        crawlConfigurationHandler.updateCrawlConfigXml(maxTotalConnections, Integer.parseInt(txtMaxTotalConnections.getText()));
-        //Update maxDownloadPageSize
-        crawlConfigurationHandler.updateCrawlConfigXml(maxDownloadPageSize, Integer.parseInt(txtMaxDownloadPageSize.getText()));
-        //Update maxConcurrentThread
-        crawlConfigurationHandler.updateCrawlConfigXml(maxConcurrentThread, Integer.parseInt(txtMaxConcurrentThread.getText()));
-
-//        } catch (Exception ex) {
-//             Logger.getLogger(CrawlConfigurationHandler.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        this.setVisible(false);
-    }//GEN-LAST:event_btnOKActionPerformed
-
     private void btnDefaultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDefaultActionPerformed
-        // TODO add your handling code here:
-       
+        loadValue();
     }//GEN-LAST:event_btnDefaultActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        // TODO add your handling code here:
-        this.setVisible(false);
-//        wcrawlerManager.ResetMain();
-
+        loadValue();
+        returnToManager();
     }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
+        // TODO add your handling code here:
+        try {
+            crawlConfiguration.setConnectionTimeout(Integer.parseInt(txtConnectionTimeout.getText()));
+        } catch (NumberFormatException numberFormatException) {
+        }
+        try {
+            crawlConfiguration.setMaxConcurrentThread(Integer.parseInt(txtMaxConcurrentThread.getText()));
+        } catch (NumberFormatException numberFormatException) {
+        }
+        try {
+            crawlConfiguration.setMaxConnectionPerHost(Integer.parseInt(txtMaxConnectionPerHost.getText()));
+        } catch (NumberFormatException numberFormatException) {
+        }
+        try {
+            crawlConfiguration.setMaxDownloadPageSize(Integer.parseInt(txtMaxDownloadPageSize.getText()));
+        } catch (NumberFormatException numberFormatException) {
+        }
+        try {
+            crawlConfiguration.setMaxTotalConnections(Integer.parseInt(txtMaxTotalConnections.getText()));
+        } catch (NumberFormatException numberFormatException) {
+        }
+        try {
+            crawlConfiguration.setPolitenessDelay(Integer.parseInt(txtPolitenessDelay.getText()));
+        } catch (NumberFormatException numberFormatException) {
+        }
+        
+        loadValue();
+        returnToManager();
+    }//GEN-LAST:event_btnOKActionPerformed
     /**
      * @param args the command line arguments
      */
@@ -294,4 +310,10 @@ public class frmCrawlerOption extends javax.swing.JFrame {
     private javax.swing.JTextField txtMaxTotalConnections;
     private javax.swing.JTextField txtPolitenessDelay;
     // End of variables declaration//GEN-END:variables
+
+    private void returnToManager() {
+        this.setVisible(false);
+        wcrawlerManager.setEnabled(true);
+        wcrawlerManager.setVisible(true);
+    }
 }

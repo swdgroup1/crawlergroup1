@@ -8,6 +8,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,15 +22,29 @@ import java.util.regex.Pattern;
  */
 public class FrmCrawlerStart extends javax.swing.JFrame {
 
+    private WcrawlerManager wcrawlerManager;
+
     /**
      * Creates new form FrmCrawlerStart
      */
-    public FrmCrawlerStart() {
+    public FrmCrawlerStart(WcrawlerManager wcrawlermanager) {
         initComponents();
+
+        this.setDefaultCloseOperation(HIDE_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                wcrawlerManager.setEnabled(true);
+            }
+        });
+
+        this.wcrawlerManager = wcrawlermanager;
+
         //Display center Screen
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-        
+        this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+
         pnlFilter.setVisible(false);
     }
 
@@ -51,7 +67,7 @@ public class FrmCrawlerStart extends javax.swing.JFrame {
         cmbTextURL = new javax.swing.JComboBox();
         pnlButton = new javax.swing.JPanel();
         btnOK = new javax.swing.JButton();
-        btnCancel = new javax.swing.JButton();
+        javax.swing.JButton btnCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -201,52 +217,50 @@ public class FrmCrawlerStart extends javax.swing.JFrame {
     private void chkIsFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIsFilterActionPerformed
         // TODO add your handling code here:
         //If the checkbox is check , set panel filter is visible
-        if(chkIsFilter.isSelected()==true){
+        if (chkIsFilter.isSelected() == true) {
             pnlFilter.setVisible(true);
-        }
-        else{
+        } else {
             pnlFilter.setVisible(false);
         }
     }//GEN-LAST:event_chkIsFilterActionPerformed
 
     private void cmbTextURLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTextURLActionPerformed
         // TODO add your handling code here:
-        
     }//GEN-LAST:event_cmbTextURLActionPerformed
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        // TODO add your handling code here:
+        //TO DO: implement OK button
+        returnToManager();
     }//GEN-LAST:event_btnOKActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         // TODO add your handling code here:
-        this.setVisible(false);
+        returnToManager();
     }//GEN-LAST:event_btnCancelActionPerformed
- //Get the text URL
-    private String GetURL()
-    {
-        return (cmbTextURL.getItemAt(cmbTextURL.getItemCount()-1).toString());
+    //Get the text URL
+
+    private String GetURL() {
+        return (cmbTextURL.getItemAt(cmbTextURL.getItemCount() - 1).toString());
     }
     // Method Get text for user copy Clipboard
-    public void Create()
-    {
+
+    public void Create() {
         try {
             String data = "";
-                   data = (String)Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-                   Pattern pattern = Pattern.compile("\\s");
-                   Matcher matcher = pattern.matcher(data);
-                   boolean found = matcher.find();
-               
-                   //only capture non-space string from clipboard
-                   if(!found){
-                       cmbTextURL.getEditor().setItem(data);
-                   }
-                   else {
-                       cmbTextURL.getEditor().setItem(null);
-                   }
-                             
-               cmbTextURL.getEditor().selectAll();   
-               this.setVisible(true);
+            data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+            Pattern pattern = Pattern.compile("\\s");
+            Matcher matcher = pattern.matcher(data);
+            boolean found = matcher.find();
+
+            //only capture non-space string from clipboard
+            if (!found) {
+                cmbTextURL.getEditor().setItem(data);
+            } else {
+                cmbTextURL.getEditor().setItem(null);
+            }
+
+            cmbTextURL.getEditor().selectAll();
+            this.setVisible(true);
         } catch (UnsupportedFlavorException | IOException ex) {
             Logger.getLogger(FrmCrawlerStart.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -286,7 +300,6 @@ public class FrmCrawlerStart extends javax.swing.JFrame {
 //        });
 //    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnOK;
     private javax.swing.JCheckBox chkIsFilter;
     private javax.swing.JComboBox cmbTextURL;
@@ -298,4 +311,10 @@ public class FrmCrawlerStart extends javax.swing.JFrame {
     private javax.swing.JPanel pnlStartClawler;
     private javax.swing.JTextField txtFilter;
     // End of variables declaration//GEN-END:variables
+
+    private void returnToManager() {
+        this.setVisible(false);
+        wcrawlerManager.setEnabled(true);
+        wcrawlerManager.setVisible(true);
+    }
 }

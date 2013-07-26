@@ -7,13 +7,21 @@ package wcrawler.GUI;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import wcrawler.core.CrawlConfigurationHandler;
+import wcrawler.crawler.*;
+import wcrawler.information.*;
+
 /**
  *
  * @author Vo Anh
  */
 public class WcrawlerManager extends javax.swing.JFrame {
+
     private FrmCrawlerStart crawlerStart;
     private frmCrawlerOption crawlerOption;
+    private CrawlCreator crawlCreator;
+    private CrawlConfiguration crawlConfiguration;
+    
     /**
      * Creates new form WcrawlerManager
      */
@@ -25,13 +33,18 @@ public class WcrawlerManager extends javax.swing.JFrame {
         //display in the center of screen
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+           
+        //load config
+        CrawlConfigurationHandler crawlConfigurationHandler = new CrawlConfigurationHandler();
+        crawlConfiguration = crawlConfigurationHandler.loadCrawlConfigFromXml();
         
-        crawlerStart = new FrmCrawlerStart();
+        //creat start and option form
+        crawlerStart = new FrmCrawlerStart(this);
         crawlerStart.setVisible(false);
-        
-        crawlerOption = new frmCrawlerOption();
+
+        crawlerOption = new frmCrawlerOption(this,crawlConfiguration);
         crawlerOption.setVisible(false);
-        
+
         //Set Button enable when formload
         btnStart.setEnabled(true);
         btnPause.setEnabled(false);
@@ -41,9 +54,7 @@ public class WcrawlerManager extends javax.swing.JFrame {
         //init other form
         
     }
-    public void ResetMain(){
-        this.setEnabled(true);
-    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -194,7 +205,7 @@ public class WcrawlerManager extends javax.swing.JFrame {
 
     private void btnPauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPauseActionPerformed
         // TODO add your handling code here:
-        
+
         btnResume.setEnabled(true);
         btnPause.setEnabled(false);
         btnStop.setEnabled(false);
@@ -202,7 +213,7 @@ public class WcrawlerManager extends javax.swing.JFrame {
 
     private void btnResumeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResumeActionPerformed
         // TODO add your handling code here:
-        
+
         btnResume.setEnabled(false);
         btnPause.setEnabled(true);
         btnStop.setEnabled(true);
@@ -210,7 +221,7 @@ public class WcrawlerManager extends javax.swing.JFrame {
 
     private void btnStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStopActionPerformed
         // TODO add your handling code here:
-        
+
         btnPause.setEnabled(true);
         btnResume.setEnabled(true);
         btnStart.setEnabled(true);
@@ -220,13 +231,15 @@ public class WcrawlerManager extends javax.swing.JFrame {
     private void btnOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOptionActionPerformed
         // TODO add your handling code here:
         this.setEnabled(false);
-       crawlerOption.setVisible(true);
+        crawlerOption.setVisible(true);
     }//GEN-LAST:event_btnOptionActionPerformed
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
-        // TODO add your handling code here:
-        crawlerStart.setVisible(true);
+       crawlerStart.setVisible(true);
         crawlerStart.Create();
+       
+        this.setEnabled(false);
+        
         //Set enable button pause, resume, stops is true
         btnPause.setEnabled(true);
         btnStop.setEnabled(true);
