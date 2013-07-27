@@ -7,9 +7,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import org.apache.log4j.Logger;
 import wcrawler.information.CrawlConfiguration;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 /**
  * Connect MySQL database
  * @author Vo Anh
@@ -17,6 +16,8 @@ import java.util.logging.Logger;
 public class DatabaseConnect {
     //Use for read file config
     private CrawlConfiguration crawlConfiguration;
+    static Logger _logger = Logger.getLogger(DatabaseConnect.class); 
+    
 
     public DatabaseConnect(CrawlConfiguration crawlConfiguration) {
         this.crawlConfiguration = crawlConfiguration;
@@ -40,22 +41,25 @@ public class DatabaseConnect {
             //Get Connection
             connection = DriverManager.getConnection(urlDatabase+ database, username, password); 
             //sql statment for insert data
+            
             String sql="INSERT INTO Test(URL,Drug_Name,Drug_Infomation,Raw_Html) VALUES('"+url+"','"+drugName+"','"+drugInfo+"','"+rawHtml +"')";
             Statement statement = connection.createStatement();
+            
+            _logger.debug(sql);
             //excute update sql statement
             statement.executeUpdate(sql);
             //return true if insert succesfully
            return true;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(CrawlConfigurationHandler.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(CrawlConfigurationHandler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(DatabaseConnect.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(DatabaseConnect.class.getName()).log(Level.SEVERE, null, ex);
         }finally
         {
             try {
                 connection.close();
             } catch (SQLException ex) {
-                Logger.getLogger(DatabaseConnect.class.getName()).log(Level.SEVERE, null, ex);
+//                Logger.getLogger(DatabaseConnect.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         //fail to insert

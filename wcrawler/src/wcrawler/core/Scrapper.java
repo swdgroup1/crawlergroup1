@@ -11,13 +11,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import wcrawler._interface.IScraper;
 import wcrawler.information.CrawledPage;
-import wcrawler.core.DatabaseConnect;
 /**
  *
  * @author Hai
  */
 public class Scrapper implements IScraper {
-    private DatabaseConnect databaseConnect;
+    private DatabaseConnect databaseConnect ;
 
     public Scrapper(DatabaseConnect databaseConnect) {
         this.databaseConnect = databaseConnect;
@@ -35,6 +34,8 @@ public class Scrapper implements IScraper {
 
         String title = titleElement.text();
         
-        //databaseConnect.isInsertDatabase(page.getAbsoluteUrl(), title, drugsInfo, page.getRawContent());
+        databaseConnect.isInsertDatabase(page.getAbsoluteUrl(), title, drugsInfo, page.getRawContent());
+   
+        
     }
 }
