@@ -90,7 +90,7 @@ public class CrawlConfigurationHandler {
                 crawlConfiguration.setMaxDownloadPageSize(Integer.parseInt(maxDownloadPageSize));
                 crawlConfiguration.setMaxConcurrentThread(Integer.parseInt(maxConcurrentThread));
                 crawlConfiguration.setMaxTotalConnections(Integer.parseInt(maxTotalConnections));
-                crawlConfiguration.setPolitenessPolicyEnable("true".equals(politenessPolicyEnable.toLowerCase())? true: false);
+                crawlConfiguration.setPolitenessPolicyEnable("true".equals(politenessPolicyEnable)? true: false);
                 //Set value for database
                 crawlConfiguration.setDriver(driver);
                 crawlConfiguration.setUrl(url);

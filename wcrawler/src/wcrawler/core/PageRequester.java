@@ -47,13 +47,13 @@ public class PageRequester implements IPageRequester {
         try {
             long bf = System.currentTimeMillis();
             synchronized (mutex) {
-                long delayTime = config.getPolitenessDelay()*1000 - ((new Date()).getTime() - lastFetchTime);
-                if (delayTime>0) {
-                    Thread.sleep(delayTime);
+                long now = (new Date()).getTime();
+                if (now - lastFetchTime < config.getPolitenessDelay()) {
+                    Thread.sleep(config.getPolitenessDelay() - (now - lastFetchTime));
                 }
 
                 long af = System.currentTimeMillis();
-                _logger.debug("Delay in " + delayTime + " ms");
+                _logger.debug("Delay in " + (config.getPolitenessDelay() - (now - lastFetchTime)) + " ms");
             }
 
             // create the HttpURLConnection

@@ -47,7 +47,7 @@ public class RobotstxtLoader {
         
         Robotstxt robotstxt = new Robotstxt();
         
-        //Document doc = Jsoup.parse(content);
+        Document doc = Jsoup.parse(content);
         
 //        Elements contentElement = doc.select("div.contentBox");
 //        Elements titleElement = doc.select("div.titleAudio clearAfter > h1");
@@ -55,7 +55,7 @@ public class RobotstxtLoader {
 //        String drugsInfo = contentElement.text();
 //        
 //        String title = titleElement.text();
-        //content = doc.text();                
+        content = doc.text();                
         
         //parse the file line by line
         tokenizer = new StringTokenizer(content, "\n");

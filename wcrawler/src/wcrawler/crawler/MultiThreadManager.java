@@ -13,7 +13,6 @@ package wcrawler.crawler;
 
 import java.util.ArrayList;
 import java.util.concurrent.*;
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
 
 public class MultiThreadManager {
@@ -56,25 +55,19 @@ public class MultiThreadManager {
         start();
     }
 
-    synchronized public void stop() {        
-        state = State.Ready;
+    synchronized public void stop() {
         executor.shutdown();
-        try {
-            while (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
-            }
-        } catch (InterruptedException ex) {
-            java.util.logging.Logger.getLogger(MultiThreadManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        while (!executor.isTerminated()) {
+        };
         taskToRun.clear();
+        state = State.Ready;
     }
 
     synchronized public void addTask(Runnable task) {
         if (state == State.Running) {
             executor.execute(task);
-            _logger.info("task " + task.hashCode() + " started.");
         } else {
             taskToRun.add(task);
-            _logger.info("task " + task.hashCode() + " queued");
         }
     }
 

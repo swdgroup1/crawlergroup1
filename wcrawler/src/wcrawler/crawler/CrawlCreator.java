@@ -20,13 +20,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import wcrawler._interface.ICrawlDecisionMaker;
 import wcrawler._interface.IHyperLinkParser;
 import wcrawler._interface.IPageRequester;
 import wcrawler._interface.IScheduler;
+import wcrawler.core.CrawlConfigurationHandler;
 import wcrawler.core.CrawlDecisionMaker;
 import wcrawler.core.FIFOScheduler;
 import wcrawler.core.JsoupHyperLinkParser;
@@ -39,20 +39,21 @@ import wcrawler.information.PageToCrawl;
 import wcrawler.robotstxt.Robotstxt;
 import wcrawler.robotstxt.RobotstxtLoader;
 import wcrawler.robotstxt.RobotstxtRecord;
-import wcrawler._interface.IScraper;
-import wcrawler.core.DatabaseConnect;
-import wcrawler.core.Scrapper;
 
 public class CrawlCreator {
 
+    private IPageRequester pageRequester;
+    private IScheduler scheduler;
     private IHyperLinkParser hyperLinkParser;
+    private ICrawlDecisionMaker crawlDecisionMaker;
     private CrawlConfiguration crawlConfiguration;
     private MultiThreadManager threadManager;
     private List<String> robotstxtAllow;
     private List<String> robotstxtDisallow;
     private List<String> containLinkPattern;
     private List<String> containInformationPattern;
-    CrawlFilterPattern crawlFilterPattern;
+    private List<String> filterAllow;
+    private List<String> filterDisallow;
     static Logger _logger = Logger.getLogger(CrawlCreator.class);
 
     public CrawlCreator(CrawlConfiguration crawlConfiguration, CrawlFilterPattern crawlFilterPattern) {
@@ -60,7 +61,6 @@ public class CrawlCreator {
         this.hyperLinkParser = new JsoupHyperLinkParser();
 //        this.crawlDecisionMaker = new CrawlDecisionMaker(null, null, null, null, null, null);
         this.crawlConfiguration = crawlConfiguration;
-        this.crawlFilterPattern = crawlFilterPattern;
     }
 
     /**
@@ -72,9 +72,8 @@ public class CrawlCreator {
     public void addSeed(String url) {
 
         // Check robotstxt about this directory, allow or not
-        IScheduler scheduler = new FIFOScheduler();
-        IPageRequester pageRequester = new PageRequester();
-        IScraper scraper = new Scrapper(new DatabaseConnect(crawlConfiguration));
+        scheduler = new FIFOScheduler();
+        pageRequester = new PageRequester();
         PageToCrawl page = new PageToCrawl();
 
         try {
@@ -90,15 +89,11 @@ public class CrawlCreator {
 
             getFilterPattern();
 
-            ICrawlDecisionMaker crawlDecisionMaker = new CrawlDecisionMaker(robotstxtAllow, robotstxtDisallow, 
-                    containLinkPattern, containInformationPattern, 
-                    crawlFilterPattern.getAllows(), crawlFilterPattern.getDisallows());
+            crawlDecisionMaker = new CrawlDecisionMaker(robotstxtAllow, robotstxtDisallow, containLinkPattern, containInformationPattern, filterAllow, filterDisallow);
             // add to queue
             scheduler.addPage(page);
-            Crawler crawler = new Crawler(pageRequester, scheduler, hyperLinkParser, 
-                    crawlDecisionMaker, crawlConfiguration,threadManager,scraper);
-            //threadManager.addTask(crawler);
-            crawler.run();
+            Crawler crawler = new Crawler(pageRequester, scheduler, hyperLinkParser, crawlDecisionMaker, crawlConfiguration);
+            threadManager.addTask(crawler);
 
 
             _logger.info("Add Crawler to list ");
@@ -117,21 +112,15 @@ public class CrawlCreator {
         page.setAbsoluteUrl(url + "/robots.txt");
         page.setIsRoot(true);
 
-        CrawledPage crawledPage = new PageRequester().fetchPage(page, crawlConfiguration);
+        CrawledPage crawledPage = pageRequester.fetchPage(page, crawlConfiguration);
 
         RobotstxtLoader robotstxtLoader = new RobotstxtLoader();
         Robotstxt robotstxt = robotstxtLoader.loadRobotstxt(crawledPage.getRawContent());
         if (robotstxt != null) {
             RobotstxtRecord robotstxtRecord = robotstxt.getRecord("*");
             if (robotstxtRecord != null) {
-                robotstxtAllow = new ArrayList<>();
-                for(String allow:robotstxtRecord.getAllow()){
-                    robotstxtAllow.add(url+allow);
-                }
-                robotstxtDisallow = new ArrayList<>();
-                for(String disallow:robotstxtRecord.getDisallows()){
-                    robotstxtDisallow.add(url+disallow);
-                }
+                robotstxtAllow = robotstxtRecord.getAllow();
+                robotstxtDisallow = robotstxtRecord.getDisallows();
             }
         }
     }
@@ -144,6 +133,10 @@ public class CrawlCreator {
             containLinkPattern = readTextFile("linkpattern.txt");
             // Contain Information Pattern
             containInformationPattern = readTextFile("infopattern.txt");
+            // FilterAllow
+            filterAllow = readTextFile("allowpattern.txt");
+            // Filter Disallow
+            filterDisallow = readTextFile("disallowpattern.txt");
 
         } catch (IOException ex) {
             _logger.error(ex.getMessage());
@@ -182,12 +175,5 @@ public class CrawlCreator {
 //
 //        // Start thread manager
 //        crawlCreator.threadManager.start();
-        
-        //Test insert data into database
-//        DatabaseConnect databaseConnect = new DatabaseConnect();
-//        boolean flag = databaseConnect.isInsertDatabase("http://www.drugs.com/", "Welcome to Drugs.com", "Drugs.com is the most popular, comprehensive and up-to-date source of drug information online. Providing free, peer-reviewed, accurate and independent data on more than 24,000 prescription drugs, over-the-counter medicines & natural products. Find helpful tools, wallet size personal medication records, mobile applications and more","http://www.drugs.com/alpha/d1.html");
-//        if (flag) {
-//            System.out.println("Insert OK");
-//        }
     }
 }
