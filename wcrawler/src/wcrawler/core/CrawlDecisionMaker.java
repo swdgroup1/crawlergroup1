@@ -12,6 +12,7 @@
 package wcrawler.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentSkipListSet;
 import wcrawler._interface.ICrawlDecisionMaker;
@@ -46,6 +47,20 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
 
         for (String pattern : patternList) {
             if (absoluteUrl.startsWith(pattern)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    private boolean isInSet(String absoluteUrl, Collection<String> patternList){
+        if (patternList.size() < 0) {
+            return false;
+        }
+
+        for (String pattern : patternList) {
+            if (absoluteUrl.equals(pattern)) {
                 return true;
             }
         }
@@ -114,7 +129,7 @@ public class CrawlDecisionMaker implements ICrawlDecisionMaker {
          * allow/disallow rules provided in robots.txt and by user; contain urls
          * which may need to be download or information to scrap
          */
-        if (isMatchedPattern(absoluteUrl, queuedPages)) { //Queued before
+        if (isInSet(absoluteUrl, queuedPages)) { //Queued before
             decision.setReason("All ready queued");
         } else if (!isAllowed(absoluteUrl, robotstxtAllow, robotstxtDisallow)) { //Not permited by robots.txt
             decision.setReason("Disallow by robots.txt");

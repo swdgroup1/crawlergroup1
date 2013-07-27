@@ -26,6 +26,7 @@ import wcrawler.information.CrawlContext;
 import wcrawler.information.CrawlDecision;
 import wcrawler.information.CrawledPage;
 import wcrawler.information.PageToCrawl;
+import wcrawler._interface.IScraper;
 
 public class Crawler implements Runnable {
 
@@ -35,6 +36,7 @@ public class Crawler implements Runnable {
     private ICrawlDecisionMaker crawlDecisionMaker;
     private CrawlConfiguration crawlConfiguration;
     private MultiThreadManager threadManager;
+    private IScraper scrapper;
     private CrawlContext crawlContext;
     private static Logger _logger = Logger.getLogger(Crawler.class.getName());
     private boolean isCompleted;
@@ -42,15 +44,18 @@ public class Crawler implements Runnable {
     public Crawler() {
     }
 
-    public Crawler(IPageRequester pageRequester, IScheduler scheduler, IHyperLinkParser hyperLinkParser, ICrawlDecisionMaker crawlDecisionMaker, CrawlConfiguration crawlConfiguration) {
+    public Crawler(IPageRequester pageRequester, IScheduler scheduler, IHyperLinkParser hyperLinkParser,
+            ICrawlDecisionMaker crawlDecisionMaker, CrawlConfiguration crawlConfiguration,
+            MultiThreadManager threadManager,IScraper scrapper) {
         this.pageRequester = pageRequester;
         this.scheduler = scheduler;
         this.hyperLinkParser = hyperLinkParser;
         this.crawlDecisionMaker = crawlDecisionMaker;
         this.crawlConfiguration = crawlConfiguration;
-
+        this.scrapper = scrapper;
+        
         isCompleted = false;
-        threadManager = new MultiThreadManager(crawlConfiguration.getMaxConcurrentThread());
+        this.threadManager = threadManager;
 
         crawlContext = new CrawlContext();
     }
@@ -59,9 +64,7 @@ public class Crawler implements Runnable {
      * This method will be invoked to run crawler,
      */
     private void crawl() {
-        int robotstxtCrawlDelayInSecs = 0;
-        final int crawlDealayConfigInSecs = crawlConfiguration.getPolitenessDelay();
-       
+
         // This loops will create a number of threads to do "processPage", 1 thread = 1 processPage
         if (!isCompleted) {
             if (scheduler.getNumberOfPageToCrawl() > 0) {
@@ -85,6 +88,7 @@ public class Crawler implements Runnable {
                 };
 
                 threadManager.addTask(task);
+                _logger.debug("add task");
             } else {
                 _logger.info("There are no pages to crawl in queue");
                 isCompleted = true;
@@ -97,7 +101,6 @@ public class Crawler implements Runnable {
         }
     }
 
-    
     /**
      * This method represents for 1 thread which will crawl a page, then
      * schedule links in that page
@@ -110,14 +113,16 @@ public class Crawler implements Runnable {
             return;
         }
 
-        if (!allowToCrawlPage(page, crawlContext)) {
-            return;
-        }
+//        if (!allowToCrawlPage(page, crawlContext)) {
+//            crawl();
+//            return;
+//        }
 
         CrawledPage crawledPage = crawlPage(page);
 
         boolean isCrawled = false;
         if (scheduler.getNumberOfPageToCrawl() > 0) {
+            _logger.debug("start crawl after " + page.getAbsoluteUrl() + ", number of pages to crawl: " + scheduler.getNumberOfPageToCrawl());
             crawl();
             isCrawled = true;
         }
@@ -127,6 +132,7 @@ public class Crawler implements Runnable {
         } else {
             _logger.info("Crawl page " + page.getAbsoluteUrl() + " completed, Status: " + crawledPage.getResponseCode() + " " + crawledPage.getResponseMessage());
             crawledPage.setAbsoluteUrl(page.getAbsoluteUrl());
+
             if (allowToCrawlPageLinks(crawledPage, crawlContext)) {
                 _logger.debug("Enter scheduler!");
                 long before = System.currentTimeMillis();
@@ -135,9 +141,19 @@ public class Crawler implements Runnable {
 
                 _logger.debug("Schedule took: " + (after - before) + " ms");
             }
+
+            if (allowToCrawlInformation(crawledPage, crawlContext)) {
+                _logger.debug("Enter scrapper");
+                long before = System.currentTimeMillis();
+                scrapInformation(crawledPage);
+                long after = System.currentTimeMillis();
+
+                _logger.debug("Scrap took: " + (after - before) + " ms");
+            }
         }
 
         if (!isCrawled) {
+            _logger.debug("start crawl after " + page.getAbsoluteUrl() + ", number of pages to crawl: " + scheduler.getNumberOfPageToCrawl());
             crawl();
         }
 
@@ -155,7 +171,7 @@ public class Crawler implements Runnable {
         //implements ratelimiter here first
         long before = System.currentTimeMillis();
         CrawledPage crawledPage = pageRequester.fetchPage(page, crawlConfiguration);
-        
+
         long after = System.currentTimeMillis();
 
         _logger.debug("Fetch page, took: " + (after - before) + " ms");
@@ -192,6 +208,16 @@ public class Crawler implements Runnable {
 
         if (!crawlDecision.isAllow()) {
             _logger.debug("Links on page " + page.getAbsoluteUrl() + " is not crawled, " + crawlDecision.getReason());
+        }
+
+        return crawlDecision.isAllow();
+    }
+
+    private boolean allowToCrawlInformation(CrawledPage page, CrawlContext crawlContext) {
+        CrawlDecision crawlDecision = crawlDecisionMaker.downloadPageContentDecision(page, crawlContext);
+
+        if (!crawlDecision.isAllow()) {
+            _logger.debug("Information on page " + page.getAbsoluteUrl() + " is not crawled, " + crawlDecision.getReason());
         }
 
         return crawlDecision.isAllow();
@@ -245,7 +271,10 @@ public class Crawler implements Runnable {
                     pageToCrawl.setIsRetry(false);
                     pageToCrawl.setUrl(webUrl);
 
-                    pageToSchedule.add(pageToCrawl);
+                    if (allowToCrawlPage(pageToCrawl, crawlContext)) {
+                        crawlContext.addQueuedPage(url);
+                        pageToSchedule.add(pageToCrawl);
+                    }
 
 
                 } catch (MalformedURLException ex) {
@@ -262,6 +291,12 @@ public class Crawler implements Runnable {
             scheduler.addPagesToCrawl(pageToSchedule);
             _logger.debug("Schedule completed!");
         }
+    }
+
+    private void scrapInformation(CrawledPage page) {
+        _logger.debug("Scrapping...");
+        scrapper.getInnerText(page);
+        _logger.debug("Scrap completed!");
     }
 
     @Override
